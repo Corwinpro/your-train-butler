@@ -1,5 +1,4 @@
 import logging
-import sys
 import os
 
 from telegram.ext import (
@@ -26,8 +25,6 @@ updater = Updater(token=TELEGRAM_TOKEN)
 dispatcher = updater.dispatcher
 
 logger.info("Created Updater.")
-print("Created Updater.")
-sys.stdout.flush()
 
 def start(update: Update, context: CallbackContext):
     context.bot.send_message(
@@ -130,5 +127,7 @@ updater.start_webhook(
     url_path=TELEGRAM_TOKEN,
     webhook_url="https://train-check.herokuapp.com/" + TELEGRAM_TOKEN,
 )
+
+logger.info("Webhook started.")
 
 updater.idle()
