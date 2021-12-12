@@ -75,12 +75,12 @@ def remove_job_if_exists(name: str, context: CallbackContext) -> bool:
 
 
 def subscribe_departure(update: Update, context: CallbackContext):
-    _from, _to, *_ = context.args
+    origin, destination, time = context.args
 
     due = 5
     chat_id = update.message.chat_id
 
-    job_name = f"{chat_id}-{_from.lower()}-{_to.lower()}"
+    job_name = f"{chat_id}-{origin.lower()}-{destination.lower()}"
 
     job_removed = remove_job_if_exists(job_name, context)
 
@@ -88,7 +88,7 @@ def subscribe_departure(update: Update, context: CallbackContext):
         train_status_update, due, context=(chat_id, _from, _to), name=job_name
     )
 
-    text = f"Subscribed to updates between {_from} and {_to}."
+    text = f"Subscribed to updates between {origin} and {destination}."
     if job_removed:
         text += " Old subscription was removed."
     update.message.reply_text(text)
