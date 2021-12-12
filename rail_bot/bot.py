@@ -1,3 +1,4 @@
+import logging
 import os
 
 from telegram.ext import (
@@ -11,11 +12,19 @@ from telegram import Update
 
 from rail_bot.rail_api import departure_board, next_departure_status
 
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+)
 
+logger = logging.getLogger(__name__)
+
+PORT = int(os.environ.get("PORT", 5000))
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "")
 
 updater = Updater(token=TELEGRAM_TOKEN)
 dispatcher = updater.dispatcher
+
+logger.info("Created Updater.")
 
 
 def start(update: Update, context: CallbackContext):
@@ -113,6 +122,6 @@ def unknown(update: Update, context: CallbackContext):
 dispatcher.add_handler(MessageHandler(Filters.command, unknown))
 
 # updater.start_polling()
-updater.start_webhook(listen="0.0.0.0", port=5000, url_path=TELEGRAM_TOKEN)
+updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TELEGRAM_TOKEN)
 updater.bot.setWebhook("https://train-check.herokuapp.com/" + TELEGRAM_TOKEN)
 updater.idle()
