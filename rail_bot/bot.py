@@ -1,4 +1,5 @@
 import logging
+import sys
 import os
 
 from telegram.ext import (
@@ -25,7 +26,8 @@ updater = Updater(token=TELEGRAM_TOKEN)
 dispatcher = updater.dispatcher
 
 logger.info("Created Updater.")
-
+print("Created Updater.")
+sys.stdout.flush()
 
 def start(update: Update, context: CallbackContext):
     context.bot.send_message(
