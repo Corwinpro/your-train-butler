@@ -1,1 +1,1 @@
-worker: python rail_bot/bot.py
+worker: python printing_sth.py
