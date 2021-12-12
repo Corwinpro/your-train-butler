@@ -1,1 +1,1 @@
-worker: python rail_bot/bot.py
+web: python rail_bot/bot.py
