@@ -18,7 +18,7 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-PORT = int(os.environ.get("PORT", 5000))
+PORT = int(os.environ.get("PORT", 8443))
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "")
 
 updater = Updater(token=TELEGRAM_TOKEN)
@@ -122,6 +122,11 @@ def unknown(update: Update, context: CallbackContext):
 dispatcher.add_handler(MessageHandler(Filters.command, unknown))
 
 # updater.start_polling()
-updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TELEGRAM_TOKEN)
-updater.bot.setWebhook("https://train-check.herokuapp.com/" + TELEGRAM_TOKEN)
+updater.start_webhook(
+    listen="0.0.0.0",
+    port=PORT,
+    url_path=TELEGRAM_TOKEN,
+    webhook_url="https://train-check.herokuapp.com/" + TELEGRAM_TOKEN,
+)
+
 updater.idle()
