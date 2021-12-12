@@ -20,9 +20,9 @@ dispatcher = updater.dispatcher
 
 def start(update: Update, context: CallbackContext):
     context.bot.send_message(
-        chat_id=update.effective_chat.id,
-        text=f"You are {update.effective_user.id}"
+        chat_id=update.effective_chat.id, text=f"You are {update.effective_user.id}"
     )
+
 
 dispatcher.add_handler(CommandHandler("start", start))
 
@@ -47,7 +47,7 @@ dispatcher.add_handler(CommandHandler("board", send_departure_board))
 
 
 def train_status_update(context: CallbackContext) -> None:
-    """ Send the message about the railway service disruption."""
+    """Send the message about the railway service disruption."""
     job = context.job
     chat_id, _from, _to = job.context
     departure_status = next_departure_status(_from, _to)
@@ -109,7 +109,10 @@ def unknown(update: Update, context: CallbackContext):
         text="Sorry, I didn't understand that command.",
     )
 
+
 dispatcher.add_handler(MessageHandler(Filters.command, unknown))
 
-updater.start_polling()
+# updater.start_polling()
+updater.start_webhook(listen="0.0.0.0", port=5000, url_path=TELEGRAM_TOKEN)
+updater.bot.setWebhook("https://train-check.herokuapp.com/" + TELEGRAM_TOKEN)
 updater.idle()
