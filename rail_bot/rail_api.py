@@ -56,10 +56,10 @@ class TravelDiscruptionInfo:
 class Travel:
     def __init__(
         self,
-        origin,
-        destination,
+        origin: str,
+        destination: str,
         scheduled_departure,
-        service_type,
+        service_type: str,
         delay_info: TravelDiscruptionInfo=None,
         cancel_info: TravelDiscruptionInfo=None,
         scheduled_arrival=None,
@@ -97,11 +97,7 @@ class Travel:
 
     @property
     def is_delayed(self):
-        return self.delay_info.is_active or (
-            self.estimated_departure is not None
-            and self.scheduled_departure is not None
-            and self.estimated_departure != self.scheduled_departure
-        )
+        return self.delay_info.is_active
 
     @property
     def is_cancelled(self):
@@ -173,6 +169,10 @@ def next_departure_status(from_station: str, to_station: str, timeOffset=0):
         timeOffset=timeOffset,
         _soapheaders=[header_value],
     )
+    print(res)
     departure_service = res.departures.destination[0].service
     travel = Travel.from_departure_service(departure_service)
     return travel
+
+
+print(next_departure_status("cbg", "kgx"))
