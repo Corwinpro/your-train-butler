@@ -70,6 +70,7 @@ def initiate_status_check(context: CallbackContext) -> None:
 def remove_job_if_exists(name: str, context: CallbackContext) -> bool:
     """Remove job with given name. Returns whether job was removed."""
     current_jobs = context.job_queue.get_jobs_by_name(name)
+    logger.info(", ".join([job.name for job in current_jobs]))
     if not current_jobs:
         return False
     for job in current_jobs:
@@ -114,7 +115,6 @@ def subscribe_departure(update: Update, context: CallbackContext):
     # only on weekdays
     days=tuple(range(5))
 
-    logger.info(first_check_time)
     context.job_queue.run_daily(
         initiate_status_check,
         time=first_check_time,
