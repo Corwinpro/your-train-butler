@@ -1,4 +1,5 @@
 import datetime
+import functools
 import logging
 import os
 
@@ -70,7 +71,6 @@ def initiate_status_check(context: CallbackContext) -> None:
 def remove_job_if_exists(name: str, context: CallbackContext) -> bool:
     """Remove job with given name. Returns whether job was removed."""
     current_jobs = context.job_queue.get_jobs_by_name(name)
-    logger.info(f"{name} " + ", ".join([job.name for job in context.job_queue.jobs()]))
     if not current_jobs:
         return False
     for job in current_jobs:
@@ -83,17 +83,35 @@ def _parse_time(time):
     return datetime.time(hour=date_time.hour, minute=date_time.minute)
 
 
+def parse_subscription_info(func):
+    @functools.wraps(func)
+    def wrapped(update: Update, context: CallbackContext):
+        try:
+            origin, destination, departure_time = context.args
+        except ValueError:
+            update.message.reply_text(f"Incorrect arguments.")
+            return
+
+        try:
+            departure_time = _parse_time(departure_time)
+        except Exception as e:
+            update.message.reply_text(f"{e!r}")
+            return
+
+        context.args[2] = departure_time
+
+        func(update, context)
+
+    return wrapped
+
+
 def subscribe_departure_job_name(chat_id, origin, destination, departure_time):
     return f"{chat_id}-{origin.lower()}-{destination.lower()}-{departure_time}"
 
 
+@parse_subscription_info
 def subscribe_departure(update: Update, context: CallbackContext):
     origin, destination, departure_time = context.args
-    try:
-        departure_time = _parse_time(departure_time)
-    except Exception as e:
-        update.message.reply_text(f"{e!r}")
-        return
 
     chat_id = update.message.chat_id
     job_name = subscribe_departure_job_name(
@@ -135,14 +153,10 @@ def subscribe_departure(update: Update, context: CallbackContext):
 dispatcher.add_handler(CommandHandler("subscribe", subscribe_departure))
 
 
+@parse_subscription_info
 def unsubscribe_departure(update: Update, context: CallbackContext) -> None:
     """Remove the job if the user changed their mind."""
     origin, destination, departure_time = context.args
-    try:
-        departure_time = _parse_time(departure_time)
-    except Exception as e:
-        update.message.reply_text(f"{e!r}")
-        return
 
     chat_id = update.message.chat_id
     job_name = subscribe_departure_job_name(
