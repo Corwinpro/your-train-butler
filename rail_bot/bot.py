@@ -101,12 +101,21 @@ def subscribe_departure(update: Update, context: CallbackContext):
     job_removed = remove_job_if_exists(job_name, context)
 
     # The scheduled departure check is initiated some time before the departure
-    first_check_before_departure = datetime.time(hour=1)
+    delta_before_departure = datetime.time(hour=1)
+    first_check_time_seconds = (
+        datetime.datetime.combine(datetime.date.min, departure_time)
+        - datetime.datetime.combine(datetime.date.min, delta_before_departure)
+    ).seconds
+    first_check_time = datetime.time(
+        *divmod(first_check_time_seconds // 60, 60)
+    )
+
     # only on weekdays
     days=tuple(range(5))
+
     context.job_queue.run_daily(
         initiate_status_check,
-        departure_time - first_check_before_departure,
+        time=first_check_time,
         days=days,
         context=(chat_id, origin, destination, departure_time),
         name=job_name,

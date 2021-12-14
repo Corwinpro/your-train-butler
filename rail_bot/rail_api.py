@@ -169,10 +169,6 @@ def next_departure_status(from_station: str, to_station: str, timeOffset=0):
         timeOffset=timeOffset,
         _soapheaders=[header_value],
     )
-    print(res)
     departure_service = res.departures.destination[0].service
     travel = Travel.from_departure_service(departure_service)
     return travel
-
-
-print(next_departure_status("cbg", "kgx"))
