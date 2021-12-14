@@ -1,3 +1,4 @@
+import datetime
 import logging
 import os
 
@@ -56,9 +57,10 @@ dispatcher.add_handler(CommandHandler("board", send_departure_board))
 
 def train_status_update(context: CallbackContext) -> None:
     """Send the message about the railway service disruption."""
-    job = context.job
-    chat_id, _from, _to = job.context
-    departure_status = next_departure_status(_from, _to)
+    chat_id, origin, destination, time = context.job.context
+    departure_status = next_departure_status(origin, destination)
+
+    context.bot.send_message(chat_id, text=f"DEBUG: {departure_status!r}")
 
     if departure_status.is_delayed or departure_status.is_cancelled:
         context.bot.send_message(chat_id, text=f"{departure_status!r}")
@@ -74,21 +76,35 @@ def remove_job_if_exists(name: str, context: CallbackContext) -> bool:
     return True
 
 
+def _parse_time(time):
+    date_time = datetime.datetime.strptime(time, "%H:%M")
+    return datetime.time(hour=date_time.hour, minute=date_time.minute)
+
+
 def subscribe_departure(update: Update, context: CallbackContext):
     origin, destination, time = context.args
+    try:
+        time = _parse_time(time)
+    except Exception as e:
+        update.message.reply_text(f"{e!r}")
+        return
 
-    due = 5
     chat_id = update.message.chat_id
-
     job_name = f"{chat_id}-{origin.lower()}-{destination.lower()}"
 
     job_removed = remove_job_if_exists(job_name, context)
 
-    context.job_queue.run_repeating(
-        train_status_update, due, context=(chat_id, _from, _to), name=job_name
+    context.job_queue.run_daily(
+        train_status_update,
+        time,
+        context=(chat_id, origin, destination, time),
+        name=job_name,
     )
 
-    text = f"Subscribed to updates between {origin} and {destination}."
+    text = (
+        f"Subscribed to updates between {origin} and {destination} "
+        f"at {time.hour}:{time.minute}."
+    )
     if job_removed:
         text += " Old subscription was removed."
     update.message.reply_text(text)
