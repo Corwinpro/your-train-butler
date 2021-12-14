@@ -138,6 +138,12 @@ dispatcher.add_handler(CommandHandler("subscribe", subscribe_departure))
 def unsubscribe_departure(update: Update, context: CallbackContext) -> None:
     """Remove the job if the user changed their mind."""
     origin, destination, departure_time = context.args
+    try:
+        departure_time = _parse_time(departure_time)
+    except Exception as e:
+        update.message.reply_text(f"{e!r}")
+        return
+
     chat_id = update.message.chat_id
     job_name = subscribe_departure_job_name(
         chat_id, origin, destination, departure_time
