@@ -55,7 +55,7 @@ def send_departure_board(update: Update, context: CallbackContext):
 dispatcher.add_handler(CommandHandler("board", send_departure_board))
 
 
-def train_status_update(context: CallbackContext) -> None:
+def initiate_status_check(context: CallbackContext) -> None:
     """Send the message about the railway service disruption."""
     chat_id, origin, destination, time = context.job.context
     departure_status = next_departure_status(origin, destination)
@@ -81,29 +81,40 @@ def _parse_time(time):
     return datetime.time(hour=date_time.hour, minute=date_time.minute)
 
 
+def subscribe_departure_job_name(chat_id, origin, destination, departure_time):
+    return f"{chat_id}-{origin.lower()}-{destination.lower()}-{departure_time}"
+
+
 def subscribe_departure(update: Update, context: CallbackContext):
-    origin, destination, time = context.args
+    origin, destination, departure_time = context.args
     try:
-        time = _parse_time(time)
+        departure_time = _parse_time(departure_time)
     except Exception as e:
         update.message.reply_text(f"{e!r}")
         return
 
     chat_id = update.message.chat_id
-    job_name = f"{chat_id}-{origin.lower()}-{destination.lower()}"
+    job_name = subscribe_departure_job_name(
+        chat_id, origin, destination, departure_time
+    )
 
     job_removed = remove_job_if_exists(job_name, context)
 
+    # The scheduled departure check is initiated some time before the departure
+    first_check_before_departure = datetime.time(hour=1)
+    # only on weekdays
+    days=tuple(range(5))
     context.job_queue.run_daily(
-        train_status_update,
-        time,
-        context=(chat_id, origin, destination, time),
+        initiate_status_check,
+        departure_time - first_check_before_departure,
+        days=days,
+        context=(chat_id, origin, destination, departure_time),
         name=job_name,
     )
 
     text = (
         f"Subscribed to updates between {origin} and {destination} "
-        f"at {time.hour}:{time.minute}."
+        f"at {departure_time}."
     )
     if job_removed:
         text += " Old subscription was removed."
@@ -115,8 +126,12 @@ dispatcher.add_handler(CommandHandler("subscribe", subscribe_departure))
 
 def unsubscribe_departure(update: Update, context: CallbackContext) -> None:
     """Remove the job if the user changed their mind."""
+    origin, destination, departure_time = context.args
     chat_id = update.message.chat_id
-    job_removed = remove_job_if_exists(str(chat_id), context)
+    job_name = subscribe_departure_job_name(
+        chat_id, origin, destination, departure_time
+    )
+    job_removed = remove_job_if_exists(job_name, context)
     if job_removed:
         text = "Subscription cancelled!"
     else:
