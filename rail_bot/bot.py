@@ -58,6 +58,7 @@ dispatcher.add_handler(CommandHandler("board", send_departure_board))
 def initiate_status_check(context: CallbackContext) -> None:
     """Send the message about the railway service disruption."""
     chat_id, origin, destination, time = context.job.context
+    logger.info(f"initiate_status_check: {context.job.context}")
     departure_status = next_departure_status(origin, destination)
 
     context.bot.send_message(chat_id, text=f"DEBUG: {departure_status!r}")
@@ -113,6 +114,7 @@ def subscribe_departure(update: Update, context: CallbackContext):
     # only on weekdays
     days=tuple(range(5))
 
+    logger.info(first_check_time)
     context.job_queue.run_daily(
         initiate_status_check,
         time=first_check_time,
@@ -122,8 +124,8 @@ def subscribe_departure(update: Update, context: CallbackContext):
     )
 
     text = (
-        f"Subscribed to updates between {origin} and {destination} "
-        f"at {departure_time}."
+        f"Subscribed to updates between {origin.upper()} and "
+        f"{destination.upper()} at {departure_time}."
     )
     if job_removed:
         text += " Old subscription was removed."
