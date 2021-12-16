@@ -182,12 +182,12 @@ def unknown(update: Update, context: CallbackContext):
 
 dispatcher.add_handler(MessageHandler(Filters.command, unknown))
 
-def alarm(context: CallbackContext) -> None:
-    """Send the alarm message."""
-    chat_id = 50179005
-    context.bot.send_message(chat_id, text="DEBUG: HELLO")
+# def alarm(context: CallbackContext) -> None:
+#     """Send the alarm message."""
+#     chat_id = 50179005
+#     context.bot.send_message(chat_id, text="DEBUG: HELLO")
 
-updater.job_queue.run_repeating(alarm, 5)
+# updater.job_queue.run_repeating(alarm, 5)
 updater.start_polling()
 # updater.start_webhook(
 #     listen="0.0.0.0",
