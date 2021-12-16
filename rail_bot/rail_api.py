@@ -4,8 +4,8 @@ from zeep import Client
 from zeep import xsd
 from zeep.plugins import HistoryPlugin
 
-WATERBEACH_CODE = "EUS" # LST
-CAMBRIDGE_CODE = "BHI" # CBG
+WATERBEACH_CODE = "EUS"  # LST
+CAMBRIDGE_CODE = "BHI"  # CBG
 
 LDB_TOKEN = os.environ.get("LDB_TOKEN", "")
 WSDL = "http://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2017-10-01"
@@ -60,8 +60,8 @@ class Travel:
         destination: str,
         scheduled_departure,
         service_type: str,
-        delay_info: TravelDiscruptionInfo=None,
-        cancel_info: TravelDiscruptionInfo=None,
+        delay_info: TravelDiscruptionInfo = None,
+        cancel_info: TravelDiscruptionInfo = None,
         scheduled_arrival=None,
         estimated_arrival=None,
         estimated_departure=None,
