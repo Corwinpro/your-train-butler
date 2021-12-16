@@ -17,21 +17,6 @@ logger = logging.getLogger(__name__)
 PORT = int(os.environ.get("PORT", 8443))
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "")
 
-updater = Updater(token=TELEGRAM_TOKEN)
-dispatcher = updater.dispatcher
-
-logger.info("Created Updater.")
-
-dispatcher.add_handler(start_handler())
-dispatcher.add_handler(board_handler())
-dispatcher.add_handler(subscribe_handler())
-dispatcher.add_handler(unsubscribe_handler())
-dispatcher.add_handler(unknown_command_handler())
-
-updater.start_polling()
-updater.idle()
-
-
 # def alarm(context: CallbackContext) -> None:
 #     """Send the alarm message."""
 #     chat_id = 50179005
@@ -46,3 +31,23 @@ updater.idle()
 #     webhook_url="https://train-check.herokuapp.com/" + TELEGRAM_TOKEN,
 # )
 # logger.info("Webhook started.")
+
+
+def main():
+    updater = Updater(token=TELEGRAM_TOKEN)
+    dispatcher = updater.dispatcher
+
+    logger.info("Created Updater.")
+
+    dispatcher.add_handler(start_handler())
+    dispatcher.add_handler(board_handler())
+    dispatcher.add_handler(subscribe_handler())
+    dispatcher.add_handler(unsubscribe_handler())
+    dispatcher.add_handler(unknown_command_handler())
+
+    updater.start_polling()
+    updater.idle()
+
+
+if __name__ == "__main__":
+    main()

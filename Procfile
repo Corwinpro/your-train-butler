@@ -1,1 +1,1 @@
-worker: python rail_bot/bot.py
+worker: python rail_bot/__main__.py
