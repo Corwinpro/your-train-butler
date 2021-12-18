@@ -1,3 +1,5 @@
 python-telegram-bot
 zeep
+sqlalchemy
+psycopg2-binary
 .
