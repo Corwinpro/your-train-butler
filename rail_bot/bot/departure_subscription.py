@@ -4,6 +4,8 @@ import logging
 
 from telegram.ext import CallbackContext, CommandHandler
 from telegram import Update
+from telegram.ext.jobqueue import JobQueue
+from rail_bot.bot.service.job_service import create_job_service
 
 from rail_bot.bot.utils import parse_time
 from rail_bot.bot.job_manager import remove_job_if_exists
@@ -51,16 +53,14 @@ def initiate_status_check(context: CallbackContext) -> None:
         context.bot.send_message(chat_id, text=f"{departure_status!r}")
 
 
-@parse_subscription_info
-def subscribe_departure(update: Update, context: CallbackContext):
-    origin, destination, departure_time = context.args
-
-    chat_id = update.message.chat_id
+def subscribe_departure(
+    job_queue: JobQueue, chat_id: int, origin: str, destination: str, departure_time
+):
     job_name = subscribe_departure_job_name(
         chat_id, origin, destination, departure_time
     )
 
-    job_removed = remove_job_if_exists(job_name, context)
+    job_removed = remove_job_if_exists(job_name, job_queue)
 
     # The scheduled departure check is initiated some time before the departure
     delta_before_departure = datetime.time(hour=1)
@@ -71,9 +71,9 @@ def subscribe_departure(update: Update, context: CallbackContext):
     first_check_time = datetime.time(*divmod(first_check_time_seconds // 60, 60))
 
     # only on weekdays
-    days = tuple(range(5))
+    days = tuple(range(7))
 
-    context.job_queue.run_daily(
+    job_queue.run_daily(
         initiate_status_check,
         time=first_check_time,
         days=days,
@@ -81,25 +81,52 @@ def subscribe_departure(update: Update, context: CallbackContext):
         name=job_name,
     )
 
-    text = (
-        f"Subscribed to updates between {origin.upper()} and "
-        f"{destination.upper()} at {departure_time}."
+    response = (
+        f"Subscribed to updates between {origin.upper()} and {destination.upper()}"
+        f" at {departure_time}."
     )
     if job_removed:
-        text += " Old subscription was removed."
-    update.message.reply_text(text)
+        response += " Old subscription was removed."
+
+    return response
 
 
 @parse_subscription_info
-def unsubscribe_departure(update: Update, context: CallbackContext) -> None:
-    """Remove the job if the user changed their mind."""
+def _subscribe_departure(update: Update, context: CallbackContext):
     origin, destination, departure_time = context.args
 
+    job_service = create_job_service()
+    job_service.add_job(
+        chat_id=update.message.chat_id,
+        origin=origin,
+        destination=destination,
+        departure_time=departure_time,
+    )
+
+    response = subscribe_departure(
+        context.job_queue, update.message.chat_id, *context.args
+    )
+    update.message.reply_text(response)
+
+
+@parse_subscription_info
+def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
+    """Remove the job if the user changed their mind."""
+    origin, destination, departure_time = context.args
     chat_id = update.message.chat_id
+
+    job_service = create_job_service()
+    job_service.deactivate_job(
+        chat_id=update.message.chat_id,
+        origin=origin,
+        destination=destination,
+        departure_time=departure_time,
+    )
+
     job_name = subscribe_departure_job_name(
         chat_id, origin, destination, departure_time
     )
-    job_removed = remove_job_if_exists(job_name, context)
+    job_removed = remove_job_if_exists(job_name, context.job_queue)
     if job_removed:
         text = "Subscription cancelled!"
     else:
@@ -108,8 +135,8 @@ def unsubscribe_departure(update: Update, context: CallbackContext) -> None:
 
 
 def subscribe_handler():
-    return CommandHandler("subscribe", subscribe_departure)
+    return CommandHandler("subscribe", _subscribe_departure)
 
 
 def unsubscribe_handler():
-    return CommandHandler("unsubscribe", unsubscribe_departure)
+    return CommandHandler("unsubscribe", _unsubscribe_departure)
