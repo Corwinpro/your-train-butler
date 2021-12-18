@@ -6,7 +6,6 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.sql.schema import UniqueConstraint
 from sqlalchemy.exc import IntegrityError
 
-# "postgresql://postgres:mysecretpassword@localhost:5432/job_service"
 
 DATABASE_URL = os.environ["DATABASE_URL"]
 
@@ -107,5 +106,6 @@ class JobService:
 
 
 def create_job_service() -> JobService:
-    job_service = JobService(DATABASE_URL)
+    url = DATABASE_URL.replace("postgres://", "postgresql://")
+    job_service = JobService(url)
     return job_service
