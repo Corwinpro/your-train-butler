@@ -7,6 +7,7 @@ from rail_bot.bot.start_handler import start_handler
 from rail_bot.bot.board_handler import board_handler
 from rail_bot.bot.departure_subscription import subscribe_handler, unsubscribe_handler
 from rail_bot.bot.unknown_handler import unknown_command_handler
+from rail_bot.bot.job_recovery import recover_jobs
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -16,13 +17,6 @@ logger = logging.getLogger(__name__)
 
 PORT = int(os.environ.get("PORT", 8443))
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "")
-
-# def alarm(context: CallbackContext) -> None:
-#     """Send the alarm message."""
-#     chat_id = 50179005
-#     context.bot.send_message(chat_id, text="DEBUG: HELLO")
-
-# updater.job_queue.run_repeating(alarm, 5)
 
 # updater.start_webhook(
 #     listen="0.0.0.0",
@@ -36,8 +30,9 @@ TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "")
 def main():
     updater = Updater(token=TELEGRAM_TOKEN)
     dispatcher = updater.dispatcher
-
     logger.info("Created Updater.")
+
+    recover_jobs(updater.job_queue)
 
     dispatcher.add_handler(start_handler())
     dispatcher.add_handler(board_handler())
