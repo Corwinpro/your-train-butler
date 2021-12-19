@@ -13,6 +13,14 @@ def send_departure_board(update: Update, context: CallbackContext):
         origin, destination = context.args
     elif len(context.args) == 3:
         origin, destination, rows = context.args
+    else:
+        context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=(
+                "The '/board' command requires at least one argument: name"
+                " of the station (e.g. 'KGX'). See /help for more info."
+            ),
+        )
 
     context.bot.send_message(
         chat_id=update.effective_chat.id,
