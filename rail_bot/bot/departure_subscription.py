@@ -37,7 +37,9 @@ def parse_subscription_info(func):
     return wrapped
 
 
-def subscribe_departure_job_name(chat_id, origin, destination, departure_time):
+def subscribe_departure_job_name(
+    chat_id: int, origin: str, destination: str, departure_time
+) -> str:
     return f"{chat_id}-{origin.lower()}-{destination.lower()}-{departure_time}"
 
 
@@ -54,7 +56,11 @@ def initiate_status_check(context: CallbackContext) -> None:
 
 
 def subscribe_departure(
-    job_queue: JobQueue, chat_id: int, origin: str, destination: str, departure_time
+    job_queue: JobQueue,
+    chat_id: int,
+    origin: str,
+    destination: str,
+    departure_time: datetime.time,
 ):
     job_name = subscribe_departure_job_name(
         chat_id, origin, destination, departure_time
@@ -92,7 +98,7 @@ def subscribe_departure(
 
 
 @parse_subscription_info
-def _subscribe_departure(update: Update, context: CallbackContext):
+def _subscribe_departure(update: Update, context: CallbackContext) -> None:
     origin, destination, departure_time = context.args
 
     job_service = create_job_service()
