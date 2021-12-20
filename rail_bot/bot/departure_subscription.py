@@ -55,6 +55,18 @@ def initiate_status_check(context: CallbackContext) -> None:
         context.bot.send_message(chat_id, text=f"{departure_status!r}")
 
 
+def _subtract_time(
+    time_from: datetime.time, delta_hour: int = 0, delta_minute: int = 0
+) -> datetime.time:
+    delta_time = datetime.time(hour=delta_hour, minute=delta_minute)
+    subtracted_time_seconds = (
+        datetime.datetime.combine(datetime.date.min, time_from)
+        - datetime.datetime.combine(datetime.date.min, delta_time)
+    ).seconds
+    subtracted_time = datetime.time(*divmod(subtracted_time_seconds // 60, 60))
+    return subtracted_time
+
+
 def subscribe_departure(
     job_queue: JobQueue,
     chat_id: int,
@@ -69,12 +81,7 @@ def subscribe_departure(
     job_removed = remove_job_if_exists(job_name, job_queue)
 
     # The scheduled departure check is initiated some time before the departure
-    delta_before_departure = datetime.time(hour=1)
-    first_check_time_seconds = (
-        datetime.datetime.combine(datetime.date.min, departure_time)
-        - datetime.datetime.combine(datetime.date.min, delta_before_departure)
-    ).seconds
-    first_check_time = datetime.time(*divmod(first_check_time_seconds // 60, 60))
+    first_check_time = _subtract_time(departure_time, delta_hour=1, delta_minute=0)
 
     # only on weekdays
     days = tuple(range(7))
