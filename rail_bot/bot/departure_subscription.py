@@ -9,7 +9,7 @@ from rail_bot.bot.service.job_service import create_job_service
 
 from rail_bot.bot.utils import parse_time
 from rail_bot.bot.job_manager import remove_job_if_exists
-from rail_bot.rail_api import next_departure_status
+from rail_bot.rail_api.api import next_departure_status
 
 
 logger = logging.getLogger(__name__)
@@ -44,7 +44,7 @@ def subscribe_departure_job_name(
 
 
 def initiate_status_check(context: CallbackContext) -> None:
-    """Send the message about the railway service disruption."""
+    """ Initiate a sequence of checks for railway service disruption."""
     chat_id, origin, destination, time = context.job.context
     logger.info(f"initiate_status_check: {context.job.context}")
     departure_status = next_departure_status(origin, destination)

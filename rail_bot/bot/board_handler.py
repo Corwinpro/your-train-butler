@@ -1,7 +1,7 @@
 from telegram.ext import CallbackContext, CommandHandler
 from telegram import Update
 
-from rail_bot.rail_api import departure_board
+from rail_bot.rail_api.api import departure_board
 
 
 def send_departure_board(update: Update, context: CallbackContext):
