@@ -157,7 +157,12 @@ def departure_board(from_station: str, to_station, rows=None):
     msg = f"Trains at {res.locationName}\n"
     for service in res.trainServices.service:
         destination = service.destination.location[0].locationName
-        msg += f"{service.std} to {destination} - {service.etd}\n"
+        msg += f"{service.std} to {destination} - {service.etd}"
+
+        if service.platform is not None:
+            msg += f" (Platform {service.platform})"
+
+        msg += "\n"
 
     return msg
 
