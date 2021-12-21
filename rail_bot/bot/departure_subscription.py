@@ -44,7 +44,7 @@ def subscribe_departure_job_name(
 
 
 def get_travel_status(context: CallbackContext) -> None:
-    """Get current departure status, and compare it to the already known one
+    """ Get current departure status, and compare it to the already known one
     from some time ago. If there are any changes, report to the user.
 
     Submit this function to run again in some time.
@@ -72,7 +72,7 @@ def get_travel_status(context: CallbackContext) -> None:
 
     job_name = (
         subscribe_departure_job_name(chat_id, origin, destination, time)
-        + f"{current_time}"
+        + f"{current_time}-initial"
     )
     context.job_queue.run_once(
         get_travel_status,

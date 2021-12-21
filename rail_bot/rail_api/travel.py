@@ -27,6 +27,15 @@ class TravelDiscruptionInfo:
             event_reason=departure_service.cancelReason,
         )
 
+    def __eq__(self, __o: object) -> bool:
+        if not isinstance(__o, TravelDiscruptionInfo):
+            return False
+
+        return (
+            self.event_type == __o.event_type
+            and self.event_reason == __o.event_reason
+        )
+
 
 class Travel:
     def __init__(
