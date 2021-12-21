@@ -38,21 +38,73 @@ def parse_subscription_info(func):
 
 
 def subscribe_departure_job_name(
-    chat_id: int, origin: str, destination: str, departure_time
+    chat_id: int, origin: str, destination: str, departure_time: datetime.time
 ) -> str:
     return f"{chat_id}-{origin.lower()}-{destination.lower()}-{departure_time}"
 
 
+def get_travel_status(context: CallbackContext) -> None:
+    """ Get current departure status, and compare it to the already known one
+    from some time ago. If there are any changes, report to the user.
+
+    Submit this function to run again in some time.
+
+    This function is executed in a JobQueue.
+    """
+    logger.info(f"initiate_status_check: {context.job.context}")
+
+    chat_id, origin, destination, time, travel_obj = context.job.context
+
+    current_time = datetime.datetime.now()
+    if current_time > datetime.datetime.combine(datetime.date.today(), time):
+        # Already too late
+        return
+
+    current_travel_obj = next_departure_status(origin, destination)
+
+    if current_travel_obj.is_delayed or current_travel_obj.is_cancelled:
+        rerun_in = 2 * 60  # seconds
+
+        if current_travel_obj != travel_obj:
+            context.bot.send_message(chat_id, text=f"{current_travel_obj!r}")
+    else:
+        rerun_in = 10 * 60  # seconds
+
+    job_name = (
+        subscribe_departure_job_name(chat_id, origin, destination, time)
+        + f"{current_time}"
+    )
+    context.job_queue.run_once(
+        get_travel_status,
+        when=rerun_in,
+        context=(chat_id, origin, destination, time, current_travel_obj),
+        name=job_name,
+    )
+
+
 def initiate_status_check(context: CallbackContext) -> None:
-    """ Initiate a sequence of checks for railway service disruption."""
+    """Initiate a sequence of checks for railway service disruption.
+
+    This function is executed in a JobQueue.
+    """
     chat_id, origin, destination, time = context.job.context
     logger.info(f"initiate_status_check: {context.job.context}")
-    departure_status = next_departure_status(origin, destination)
 
-    context.bot.send_message(chat_id, text=f"DEBUG: {departure_status!r}")
+    # departure_status = next_departure_status(origin, destination)
+    # context.bot.send_message(chat_id, text=f"DEBUG: {departure_status!r}")
+    # if departure_status.is_delayed or departure_status.is_cancelled:
+    #     context.bot.send_message(chat_id, text=f"{departure_status!r}")
 
-    if departure_status.is_delayed or departure_status.is_cancelled:
-        context.bot.send_message(chat_id, text=f"{departure_status!r}")
+    job_name = (
+        subscribe_departure_job_name(chat_id, origin, destination, time)
+        + f"{datetime.datetime.now()}"
+    )
+    context.job_queue.run_once(
+        get_travel_status,
+        when=1,
+        context=(chat_id, origin, destination, time, None),
+        name=job_name,
+    )
 
 
 def _subtract_time(
