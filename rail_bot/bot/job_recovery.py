@@ -13,7 +13,7 @@ def recover_jobs(job_queue: JobQueue):
     active_jobs = job_service.get_jobs()
     logger.info(
         f"Found {len(active_jobs)} active jobs that will be recovered. "
-        f"{[(job.chat_id, job.origin, job.destination, job.time) for job in active_jobs]}"
+        f"{[(job.chat_id, job.origin, job.destination, job.departure_time) for job in active_jobs]}"
     )
 
     for job in active_jobs:
