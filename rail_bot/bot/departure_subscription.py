@@ -51,7 +51,7 @@ def get_travel_status(context: CallbackContext) -> None:
 
     This function is executed in a JobQueue.
     """
-    logger.info(f"initiate_status_check: {context.job.context}")
+    logger.info(f"get_travel_status: {context.job.context}")
 
     chat_id, origin, destination, time, travel_obj = context.job.context
 
@@ -89,11 +89,6 @@ def initiate_status_check(context: CallbackContext) -> None:
     """
     chat_id, origin, destination, time = context.job.context
     logger.info(f"initiate_status_check: {context.job.context}")
-
-    # departure_status = next_departure_status(origin, destination)
-    # context.bot.send_message(chat_id, text=f"DEBUG: {departure_status!r}")
-    # if departure_status.is_delayed or departure_status.is_cancelled:
-    #     context.bot.send_message(chat_id, text=f"{departure_status!r}")
 
     job_name = (
         subscribe_departure_job_name(chat_id, origin, destination, time)
@@ -152,6 +147,14 @@ def subscribe_departure(
     )
     if job_removed:
         response += " Old subscription was removed."
+
+    if False:
+        job_queue.run_once(
+            callback=initiate_status_check,
+            when=1,
+            context=(chat_id, origin, destination, departure_time),
+            name=job_name + f"{datetime.datetime.now()}",
+        )
 
     return response
 
