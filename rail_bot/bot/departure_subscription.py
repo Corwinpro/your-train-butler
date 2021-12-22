@@ -121,6 +121,7 @@ def subscribe_departure(
     destination: str,
     departure_time: datetime.time,
 ):
+    datetime_now = datetime.datetime.now()
     job_name = subscribe_departure_job_name(
         chat_id, origin, destination, departure_time
     )
@@ -148,12 +149,12 @@ def subscribe_departure(
     if job_removed:
         response += " Old subscription was removed."
 
-    if False:
+    if first_check_time < datetime_now.time() < departure_time:
         job_queue.run_once(
             callback=initiate_status_check,
             when=1,
             context=(chat_id, origin, destination, departure_time),
-            name=job_name + f"{datetime.datetime.now()}",
+            name=job_name + f"{datetime_now}",
         )
 
     return response
