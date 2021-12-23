@@ -9,7 +9,7 @@ from telegram.ext.jobqueue import JobQueue
 from rail_bot.bot.service.job_service import create_job_service
 
 from rail_bot.bot.utils import parse_time
-from rail_bot.bot.job_manager import remove_job_by_prefix
+from rail_bot.bot.job_manager import remove_jobs_by_prefix
 from rail_bot.rail_api.api import next_departure_status
 
 
@@ -132,7 +132,7 @@ def subscribe_departure(
         chat_id, origin, destination, departure_time
     )
 
-    job_removed = remove_job_by_prefix(job_name, job_queue)
+    job_removed = remove_jobs_by_prefix(job_name, job_queue)
 
     # The scheduled departure check is initiated some time before the departure
     first_check_time = _subtract_time(departure_time, delta_hour=1, delta_minute=0)
@@ -212,7 +212,7 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
     job_name = subscribe_departure_job_name(
         chat_id, origin, destination, departure_time
     )
-    job_removed = remove_job_by_prefix(job_name, context.job_queue)
+    job_removed = remove_jobs_by_prefix(job_name, context.job_queue)
     if job_removed:
         text = (
             f"Subscription from {origin} to {destination} at {departure_time} "
@@ -221,10 +221,10 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
     else:
         text = (
             f"I could not find subscriptions to the service between {origin} "
-            f" and {destination} at {departure_time}. See `/help subscriptions`"
+            f" and {destination} at {departure_time}. See <code>/unsubscribe</code>"
             f" for more information about your subscriptions."
         )
-    update.message.reply_text(text)
+    update.message.reply_html(text)
 
 
 def subscribe_handler():
