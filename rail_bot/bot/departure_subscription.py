@@ -129,10 +129,10 @@ def subscribe_departure(
     days = tuple(range(7))
 
     job_queue.run_daily(
-        initiate_status_check,
+        get_travel_status,
         time=first_check_time,
         days=days,
-        context=(chat_id, origin, destination, departure_time),
+        context=(chat_id, origin, destination, departure_time, None),
         name=job_name,
     )
 
@@ -145,9 +145,9 @@ def subscribe_departure(
 
     if first_check_time < datetime_now.time() < departure_time:
         job_queue.run_once(
-            callback=initiate_status_check,
+            callback=get_travel_status,
             when=1,
-            context=(chat_id, origin, destination, departure_time),
+            context=(chat_id, origin, destination, departure_time, None),
             name=job_name + f"-{datetime_now}",
         )
 
