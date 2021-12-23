@@ -191,7 +191,7 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
 
     job_service = create_job_service()
     job_service.deactivate_job(
-        chat_id=update.message.chat_id,
+        chat_id=chat_id,
         origin=origin,
         destination=destination,
         departure_time=departure_time,
@@ -202,7 +202,10 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
     )
     job_removed = remove_job_if_exists(job_name, context.job_queue)
     if job_removed:
-        text = "Subscription cancelled!"
+        text = (
+            f"Subscription from {origin} to {destination} at {departure_time} "
+            "cancelled!"
+        )
     else:
         text = (
             f"I could not find subscriptions to the service between {origin} "
