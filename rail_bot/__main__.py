@@ -8,6 +8,7 @@ from rail_bot.bot.board_handler import board_handler
 from rail_bot.bot.departure_subscription import subscribe_handler, unsubscribe_handler
 from rail_bot.bot.unknown_handler import unknown_command_handler
 from rail_bot.bot.job_recovery import recover_jobs
+from rail_bot.bot.help_handler import help_handler
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -39,6 +40,7 @@ def main():
     dispatcher.add_handler(subscribe_handler())
     dispatcher.add_handler(unsubscribe_handler())
     dispatcher.add_handler(unknown_command_handler())
+    dispatcher.add_handler(help_handler())
 
     updater.start_polling()
     updater.idle()
