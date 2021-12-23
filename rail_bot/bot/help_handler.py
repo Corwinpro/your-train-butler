@@ -12,10 +12,12 @@ def help(update: Update, context: CallbackContext):
         "    <code>/board KGX CBG</code>\n\n"
         "- Notify you about service disruptions.\n"
         "  If you tell me which travels you would like to follow, I will "
-        " notify in case anything goes wrong with the train.\n"
+        "notify you in case anything goes wrong with the train.\n"
         "  To subscribe to a service update, let me know about your origin "
         "station, your destination, and the departure time:\n\n"
-        "  <code>/subscribe KGX CBG 12:23</code>"
+        "  <code>/subscribe KGX CBG 12:23</code>\n\n"
+        "  To unsubscribe, type\n\n  <code>/unsubscribe KGX CBG 12:23</code>\n\n"
+        "  To see all your subscriptions, type:\n\n <code>/unsubscribe</code>"
     )
     update.message.reply_html(text)
 
