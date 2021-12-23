@@ -21,7 +21,12 @@ def parse_subscription_info(func):
         try:
             origin, destination, departure_time = context.args
         except ValueError:
-            update.message.reply_text(f"Incorrect arguments.")
+            update.message.reply_text(
+                f"Subscribe to service updates by specifying "
+                f"\n-The origin of your travel (e.g., 'kgx'),"
+                f"\n-The destination of your travel (e.g., 'cbg'),"
+                f"\n-Departure time (e.g., '12:23')."
+            )
             return
 
         try:
