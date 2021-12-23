@@ -1,6 +1,7 @@
 import functools
 import datetime
 import logging
+from typing import Callable
 
 from telegram.ext import CallbackContext, CommandHandler
 from telegram import Update
@@ -15,7 +16,7 @@ from rail_bot.rail_api.api import next_departure_status
 logger = logging.getLogger(__name__)
 
 
-def parse_subscription_info(func):
+def parse_subscription_info(func: Callable[[Update, CallbackContext], None]):
     @functools.wraps(func)
     def wrapped(update: Update, context: CallbackContext):
         try:
@@ -183,13 +184,23 @@ def _subscribe_departure(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(response)
 
 
-@parse_subscription_info
 def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
-    """Remove the job if the user changed their mind."""
-    origin, destination, departure_time = context.args
+    """ Remove the job if the user changed their mind."""
+    job_service = create_job_service()
     chat_id = update.message.chat_id
 
-    job_service = create_job_service()
+    if len(context.args) == 0:
+        active_jobs = job_service.get_jobs(chat_id=chat_id)
+        text = f"You have {len(active_jobs)} subscriptions:\n"
+        for job in active_jobs:
+            time = f"{job.departure_time.hour}:{job.departure_time.minute}"
+            text += f"- From {job.origin} to {job.destination} at {time}"
+        update.message.reply_text(text)
+        return
+
+    origin, destination, departure_time = context.args
+    departure_time = parse_time(departure_time)
+
     job_service.deactivate_job(
         chat_id=chat_id,
         origin=origin,
