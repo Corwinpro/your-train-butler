@@ -9,7 +9,7 @@ from telegram.ext.jobqueue import JobQueue
 from rail_bot.bot.service.job_service import create_job_service
 
 from rail_bot.bot.utils import parse_time
-from rail_bot.bot.job_manager import remove_job_if_exists
+from rail_bot.bot.job_manager import remove_job_by_prefix
 from rail_bot.rail_api.api import next_departure_status
 
 
@@ -78,7 +78,7 @@ def get_travel_status(context: CallbackContext) -> None:
 
     job_name = (
         subscribe_departure_job_name(chat_id, origin, destination, time)
-        + f"{current_time}-initial"
+        + f"-{current_time}"
     )
     context.job_queue.run_once(
         get_travel_status,
@@ -98,7 +98,7 @@ def initiate_status_check(context: CallbackContext) -> None:
 
     job_name = (
         subscribe_departure_job_name(chat_id, origin, destination, time)
-        + f"{datetime.datetime.now()}"
+        + f"-{datetime.datetime.now()}"
     )
     context.job_queue.run_once(
         get_travel_status,
@@ -132,7 +132,7 @@ def subscribe_departure(
         chat_id, origin, destination, departure_time
     )
 
-    job_removed = remove_job_if_exists(job_name, job_queue)
+    job_removed = remove_job_by_prefix(job_name, job_queue)
 
     # The scheduled departure check is initiated some time before the departure
     first_check_time = _subtract_time(departure_time, delta_hour=1, delta_minute=0)
@@ -160,7 +160,7 @@ def subscribe_departure(
             callback=initiate_status_check,
             when=1,
             context=(chat_id, origin, destination, departure_time),
-            name=job_name + f"{datetime_now}",
+            name=job_name + f"-{datetime_now}",
         )
 
     return response
@@ -212,7 +212,7 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
     job_name = subscribe_departure_job_name(
         chat_id, origin, destination, departure_time
     )
-    job_removed = remove_job_if_exists(job_name, context.job_queue)
+    job_removed = remove_job_by_prefix(job_name, context.job_queue)
     if job_removed:
         text = (
             f"Subscription from {origin} to {destination} at {departure_time} "
