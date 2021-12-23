@@ -5,14 +5,16 @@ from telegram import Update
 def help(update: Update, context: CallbackContext):
     text = (
         "<b>Train Check Bot</b>🚂\n"
-        "Train Check Bot can:\n"
-        "- Tell you about live departures from a station:\n"
-        "    <code>/board KGX</code>\n"
-        "  or between stations:\n"
-        "    <code>/board KGX CBG</code>\n"
-        "- Notify you about service disruptions. "
-        "To recieve notifications in case anything goes wrong, "
-        "subscribe to a service update via\n"
+        "Hey there! I am your daily rail butler. I can:\n"
+        "- Tell you about live departures from a particular station:\n\n"
+        "    <code>/board KGX</code>\n\n"
+        "  or between two stations:\n\n"
+        "    <code>/board KGX CBG</code>\n\n"
+        "- Notify you about service disruptions.\n"
+        "  If you tell me which travels you would like to follow, I will "
+        " notify in case anything goes wrong with the train.\n"
+        "  To subscribe to a service update, let me know about your origin "
+        "station, your destination, and the departure time:\n\n"
         "  <code>/subscribe KGX CBG 12:23</code>"
     )
     update.message.reply_html(text)
