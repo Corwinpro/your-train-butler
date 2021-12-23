@@ -191,6 +191,10 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
 
     if len(context.args) == 0:
         active_jobs = job_service.get_jobs(chat_id=chat_id)
+        if len(active_jobs) == 0:
+            update.message.reply_text("You have no subscriptions.")
+            return
+
         text = f"You have {len(active_jobs)} subscriptions:\n"
         for job in active_jobs:
             time = f"{job.departure_time.hour}:{job.departure_time.minute}"
