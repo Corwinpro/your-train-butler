@@ -4,7 +4,7 @@ from telegram import Update
 
 def help(update: Update, context: CallbackContext):
     text = """
-    <h3>Train Check Bot 🚂</h3>
+    <p>Train Check Bot 🚂</p>
     Train Check Bot can:
     <ul>
         <li> Tell you about live departures from a station:
