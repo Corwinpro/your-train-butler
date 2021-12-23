@@ -6,18 +6,18 @@ def help(update: Update, context: CallbackContext):
     text = """
     \#\#\# Train Check Bot 🚂
     Train Check Bot can:
-    - Tell you about live departures from a station:
+    \- Tell you about live departures from a station:
 
-    > /board KGX
+    \> /board KGX
 
     or between stations:
 
-    > /board KGX CBG
+    \> /board KGX CBG
 
-    - Notify you about service disruptions. To recieve notifications in case
+    \- Notify you about service disruptions. To recieve notifications in case
       anything goes wrong, subscribe to a service update via:
 
-    > /subscribe KGX CBG 12:23
+    \> /subscribe KGX CBG 12:23
     """
     update.message.reply_markdown_v2(text)
 
