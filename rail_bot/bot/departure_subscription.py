@@ -8,7 +8,7 @@ from telegram import Update
 from telegram.ext.jobqueue import JobQueue
 from rail_bot.bot.service.job_service import create_job_service
 
-from rail_bot.bot.utils import parse_time
+from rail_bot.bot.utils import parse_time, shift_time
 from rail_bot.bot.job_manager import remove_jobs_by_prefix
 from rail_bot.rail_api.api import next_departure_status
 
@@ -106,15 +106,6 @@ def initiate_status_check(context: CallbackContext) -> None:
         context=(chat_id, origin, destination, time, None),
         name=job_name,
     )
-
-
-def shift_time(
-    time_from: datetime.time, delta_hour: int = 0, delta_minute: int = 0
-) -> datetime.time:
-    delta = datetime.timedelta(hours=delta_hour, minutes=delta_minute)
-
-    new_time = (datetime.datetime.combine(datetime.date.today(), time_from) + delta).time()
-    return new_time
 
 
 def subscribe_departure(
