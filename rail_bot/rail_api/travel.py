@@ -2,29 +2,32 @@ from typing import Optional
 
 
 class TravelDiscruptionInfo:
-    def __init__(self, event_type, event_reason):
+    def __init__(self, event_type, event_reason, is_active):
         self.event_type = event_type
         self.event_reason = event_reason
+        self.is_active = is_active
 
     def __repr__(self):
         return self.event_reason or f"{self.event_type}, no info."
-
-    @property
-    def is_active(self):
-        return self.event_reason is not None
 
     @classmethod
     def delay_from_departure_service(cls, departure_service):
         return cls(
             event_type="DELAY",
             event_reason=departure_service.delayReason,
+            is_active=departure_service.delayReason is not None,
         )
 
     @classmethod
     def cancel_from_departure_service(cls, departure_service):
+        is_active = False
+        if departure_service.isCancelled:
+            is_active = True
+
         return cls(
             event_type="CANCEL",
             event_reason=departure_service.cancelReason,
+            is_active=is_active,
         )
 
     def __eq__(self, __o: object) -> bool:
