@@ -194,8 +194,9 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
         text = f"You have {len(active_jobs)} subscriptions:\n"
         for job in active_jobs:
             time = f"{job.departure_time.hour}:{job.departure_time.minute}"
-            text += f"- From {job.origin} to {job.destination} at {time}"
-        update.message.reply_text(text)
+            text += f"- From {job.origin.upper()} to {job.destination.upper()} at {time}\n"
+        text += "To unsubscribe, type <code>/unsubscibe ORIGIN DESTINATION HH:MM</code>."
+        update.message.reply_html(text)
         return
 
     origin, destination, departure_time = context.args
