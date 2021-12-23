@@ -204,7 +204,11 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
     if job_removed:
         text = "Subscription cancelled!"
     else:
-        text = "You have no active subscriptions."
+        text = (
+            f"I could not find subscriptions to the service between {origin} "
+            f" and {destination} at {departure_time}. See `/help subscriptions`"
+            f" for more information about your subscriptions."
+        )
     update.message.reply_text(text)
 
 
