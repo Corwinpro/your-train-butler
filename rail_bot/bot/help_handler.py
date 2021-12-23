@@ -4,22 +4,23 @@ from telegram import Update
 
 def help(update: Update, context: CallbackContext):
     text = """
-    \#\#\# Train Check Bot 🚂
+    <h3>Train Check Bot 🚂</h3>
     Train Check Bot can:
-    \- Tell you about live departures from a station:
+    <ul>
+        <li> Tell you about live departures from a station:
 
-    \> /board KGX
+            <blockquote>/board KGX</blockquote>
 
     or between stations:
 
-    \> /board KGX CBG
+        <blockquote>/board KGX CBG</blockquote>
 
-    \- Notify you about service disruptions. To recieve notifications in case
-      anything goes wrong, subscribe to a service update via:
+    <li> Notify you about service disruptions. To recieve notifications in case
+    anything goes wrong, subscribe to a service update via:
 
-    \> /subscribe KGX CBG 12:23
+            <blockquote>/subscribe KGX CBG 12:23</blockquote>
     """
-    update.message.reply_markdown_v2(text)
+    update.message.reply_html(text)
 
 
 def help_handler():
