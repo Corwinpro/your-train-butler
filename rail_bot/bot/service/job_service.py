@@ -7,9 +7,6 @@ from sqlalchemy.sql.schema import UniqueConstraint
 from sqlalchemy.exc import IntegrityError
 
 
-DATABASE_URL = os.environ["DATABASE_URL"]
-
-
 Base = declarative_base()
 
 
@@ -106,6 +103,7 @@ class JobService:
 
 
 def create_job_service() -> JobService:
-    url = DATABASE_URL.replace("postgres://", "postgresql://")
+    url = os.environ["DATABASE_URL"]
+    url = url.replace("postgres://", "postgresql://")
     job_service = JobService(url)
     return job_service

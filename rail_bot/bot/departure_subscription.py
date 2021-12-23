@@ -108,16 +108,13 @@ def initiate_status_check(context: CallbackContext) -> None:
     )
 
 
-def _subtract_time(
+def shift_time(
     time_from: datetime.time, delta_hour: int = 0, delta_minute: int = 0
 ) -> datetime.time:
-    delta_time = datetime.time(hour=delta_hour, minute=delta_minute)
-    subtracted_time_seconds = (
-        datetime.datetime.combine(datetime.date.min, time_from)
-        - datetime.datetime.combine(datetime.date.min, delta_time)
-    ).seconds
-    subtracted_time = datetime.time(*divmod(subtracted_time_seconds // 60, 60))
-    return subtracted_time
+    delta = datetime.timedelta(hours=delta_hour, minutes=delta_minute)
+
+    new_time = (datetime.datetime.combine(datetime.date.today(), time_from) + delta).time()
+    return new_time
 
 
 def subscribe_departure(
@@ -135,7 +132,7 @@ def subscribe_departure(
     job_removed = remove_jobs_by_prefix(job_name, job_queue)
 
     # The scheduled departure check is initiated some time before the departure
-    first_check_time = _subtract_time(departure_time, delta_hour=1, delta_minute=0)
+    first_check_time = shift_time(departure_time, delta_hour=-1, delta_minute=0)
 
     # only on weekdays
     days = tuple(range(7))
