@@ -39,8 +39,10 @@ def main():
     dispatcher.add_handler(board_handler())
     dispatcher.add_handler(subscribe_handler())
     dispatcher.add_handler(unsubscribe_handler())
-    dispatcher.add_handler(unknown_command_handler())
     dispatcher.add_handler(help_handler())
+
+    # Must go very last
+    dispatcher.add_handler(unknown_command_handler())
 
     updater.start_polling()
     updater.idle()
