@@ -145,7 +145,7 @@ def subscribe_departure(
         f"Subscribed to updates between {origin.upper()} and {destination.upper()}"
         f" at {departure_time}."
     )
-    if job_removed:
+    if job_removed != 0:
         response += " Old subscription was removed."
 
     if first_check_time < datetime_now.time() < departure_time:
@@ -196,6 +196,18 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
         update.message.reply_html(text)
         return
 
+    if len(context.args) == 1:
+        if context.args[0] == "all":
+            job_service.deactivate_job(chat_id=chat_id)
+            job_removed = remove_jobs_by_prefix(chat_id, context.job_queue)
+            update.message.reply_text(f"I cancelled {job_removed} subscriptions.")
+        else:
+            update.message.reply_html(
+                "Sorry, I cannot understand that. Did you want to unsubscribe from "
+                "all notifications? For that please use\n</code>/unsubscribe all<code>"
+            )
+        return
+
     origin, destination, departure_time = context.args
     departure_time = parse_time(departure_time)
 
@@ -210,7 +222,7 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
         chat_id, origin, destination, departure_time
     )
     job_removed = remove_jobs_by_prefix(job_name, context.job_queue)
-    if job_removed:
+    if job_removed != 0:
         text = (
             f"Subscription from {origin} to {destination} at {departure_time} "
             "cancelled!"
