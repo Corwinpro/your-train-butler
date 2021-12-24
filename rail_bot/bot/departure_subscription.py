@@ -204,7 +204,7 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
         else:
             update.message.reply_html(
                 "Sorry, I cannot understand that. Did you want to unsubscribe from "
-                "all notifications? For that please use\n</code>/unsubscribe all<code>"
+                "all notifications? For that please use\n<code>/unsubscribe all</code>"
             )
         return
 
