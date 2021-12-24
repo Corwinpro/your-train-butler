@@ -199,7 +199,9 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
                 f"- From {job.origin.upper()} to {job.destination.upper()} at {time}\n"
             )
         text += (
-            "To unsubscribe, type:\n <code>/unsubscibe ORIGIN DESTINATION HH:MM</code>."
+            "Use <code>/unsubscibe ORIGIN DESTINATION HH:MM</code> to unsubscribe"
+            " from a service update, or <code>/unsubscibe all</code> to cancel all"
+            "notifications."
         )
         update.message.reply_html(text)
         return
