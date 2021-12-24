@@ -1,6 +1,8 @@
 from telegram.ext import CallbackContext, CommandHandler
 from telegram import Update
 
+from rail_bot.bot.departure_subscription import UNSUBSCRIBE
+
 
 def help(update: Update, context: CallbackContext):
     text = (
@@ -16,8 +18,8 @@ def help(update: Update, context: CallbackContext):
         "  To subscribe to a service update, let me know about your origin "
         "station, your destination, and the departure time:\n\n"
         "  <code>/subscribe KGX CBG 12:23</code>\n\n"
-        "  To unsubscribe, type\n\n  <code>/unsubscribe KGX CBG 12:23</code>\n\n"
-        "  To see all your subscriptions, type:\n\n <code>/unsubscribe</code>"
+        f"  To unsubscribe, type\n\n  <code>/{UNSUBSCRIBE} KGX CBG 12:23</code>\n\n"
+        f"  To see all your subscriptions, type:\n\n <code>/{UNSUBSCRIBE}</code>"
     )
     update.message.reply_html(text)
 

@@ -16,6 +16,9 @@ from rail_bot.rail_api.api import next_departure_status
 logger = logging.getLogger(__name__)
 
 
+UNSUBSCRIBE = "unsubscribe"
+
+
 def parse_subscription_info(func: Callable[[Update, CallbackContext], None]):
     @functools.wraps(func)
     def wrapped(update: Update, context: CallbackContext):
@@ -200,7 +203,7 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
             )
         text += (
             "Use <code>/unsubscibe ORIGIN DESTINATION HH:MM</code> to unsubscribe"
-            " from a service update, or <code>/unsubscribe all</code> to cancel all"
+            f" from a service update, or <code>/{UNSUBSCRIBE} all</code> to cancel all"
             "notifications."
         )
         update.message.reply_html(text)
@@ -215,7 +218,7 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
         else:
             update.message.reply_html(
                 "Sorry, I cannot understand that. Did you want to unsubscribe from "
-                "all notifications? For that please use\n<code>/unsubscribe all</code>"
+                f"all notifications? For that please use\n<code>/{UNSUBSCRIBE} all</code>"
             )
         return
 
@@ -241,7 +244,7 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
     else:
         text = (
             f"I could not find subscriptions to the service between {origin} "
-            f" and {destination} at {departure_time}. See <code>/unsubscribe</code>"
+            f" and {destination} at {departure_time}. See <code>/{UNSUBSCRIBE}</code>"
             f" for more information about your subscriptions."
         )
     update.message.reply_html(text)
@@ -252,4 +255,4 @@ def subscribe_handler():
 
 
 def unsubscribe_handler():
-    return CommandHandler("unsubscribe", _unsubscribe_departure)
+    return CommandHandler(UNSUBSCRIBE, _unsubscribe_departure)
