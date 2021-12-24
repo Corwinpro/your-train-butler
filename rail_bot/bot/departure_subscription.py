@@ -193,14 +193,14 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
             return
 
         text = f"You have {len(active_jobs)} subscriptions:\n"
-        for job in active_jobs:
+        for job in sorted(active_jobs, key=lambda job: job.departure_time):
             time = f"{job.departure_time.hour}:{job.departure_time.minute}"
             text += (
                 f"- From {job.origin.upper()} to {job.destination.upper()} at {time}\n"
             )
         text += (
             "Use <code>/unsubscibe ORIGIN DESTINATION HH:MM</code> to unsubscribe"
-            " from a service update, or <code>/unsubscibe all</code> to cancel all"
+            " from a service update, or <code>/unsubscribe all</code> to cancel all"
             "notifications."
         )
         update.message.reply_html(text)
