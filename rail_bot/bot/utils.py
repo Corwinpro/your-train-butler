@@ -11,5 +11,7 @@ def shift_time(
 ) -> datetime.time:
     delta = datetime.timedelta(hours=delta_hour, minutes=delta_minute)
 
-    new_time = (datetime.datetime.combine(datetime.date.today(), time_from) + delta).time()
+    new_time = (
+        datetime.datetime.combine(datetime.date.today(), time_from) + delta
+    ).time()
     return new_time

@@ -83,7 +83,9 @@ class JobService:
             self.session.rollback()
             self.activate_job(chat_id, origin, destination, departure_time)
 
-    def deactivate_job(self, chat_id, origin, destination, departure_time):
+    def deactivate_job(
+        self, chat_id, origin=None, destination=None, departure_time=None
+    ):
         jobs = self._query(chat_id, origin, destination, departure_time, is_active=True)
 
         jobs.update({"is_active": False})

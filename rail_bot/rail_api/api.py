@@ -73,7 +73,7 @@ def departure_board(from_station: str, to_station, rows=None):
 
 
 def next_departure_status(
-    from_station: str, to_station: str, timeOffset: int=0
+    from_station: str, to_station: str, timeOffset: int = 0
 ) -> Optional[Travel]:
     res = client.service.GetNextDepartures(
         crs=from_station.upper(),

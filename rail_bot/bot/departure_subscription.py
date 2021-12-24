@@ -50,7 +50,7 @@ def subscribe_departure_job_name(
 
 
 def get_travel_status(context: CallbackContext) -> None:
-    """ Get current departure status, and compare it to the already known one
+    """Get current departure status, and compare it to the already known one
     from some time ago. If there are any changes, report to the user.
 
     Submit this function to run again in some time.
@@ -178,7 +178,7 @@ def _subscribe_departure(update: Update, context: CallbackContext) -> None:
 
 
 def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
-    """ Remove the job if the user changed their mind."""
+    """Remove the job if the user changed their mind."""
     job_service = create_job_service()
     chat_id = update.message.chat_id
 
@@ -191,8 +191,12 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
         text = f"You have {len(active_jobs)} subscriptions:\n"
         for job in active_jobs:
             time = f"{job.departure_time.hour}:{job.departure_time.minute}"
-            text += f"- From {job.origin.upper()} to {job.destination.upper()} at {time}\n"
-        text += "To unsubscribe, type:\n <code>/unsubscibe ORIGIN DESTINATION HH:MM</code>."
+            text += (
+                f"- From {job.origin.upper()} to {job.destination.upper()} at {time}\n"
+            )
+        text += (
+            "To unsubscribe, type:\n <code>/unsubscibe ORIGIN DESTINATION HH:MM</code>."
+        )
         update.message.reply_html(text)
         return
 

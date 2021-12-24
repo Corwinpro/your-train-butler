@@ -35,8 +35,7 @@ class TravelDiscruptionInfo:
             return False
 
         return (
-            self.event_type == __o.event_type
-            and self.event_reason == __o.event_reason
+            self.event_type == __o.event_type and self.event_reason == __o.event_reason
         )
 
 
