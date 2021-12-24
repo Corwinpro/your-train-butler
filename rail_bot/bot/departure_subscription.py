@@ -179,8 +179,12 @@ def _subscribe_departure(update: Update, context: CallbackContext) -> None:
 
 def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
     """Remove the job if the user changed their mind."""
+    if context.args is None:
+        logger.info(f"Got `None` as context.args in {update.message.chat_id}.")
+        return
+
     job_service = create_job_service()
-    chat_id = update.message.chat_id
+    chat_id: int = update.message.chat_id
 
     if len(context.args) == 0:
         active_jobs = job_service.get_jobs(chat_id=chat_id)
@@ -203,8 +207,9 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
     if len(context.args) == 1:
         if context.args[0] == "all":
             job_service.deactivate_job(chat_id=chat_id)
-            job_removed = remove_jobs_by_prefix(chat_id, context.job_queue)
-            update.message.reply_text(f"I cancelled {job_removed} subscriptions.")
+            if context.job_queue is not None:
+                job_removed = remove_jobs_by_prefix(str(chat_id), context.job_queue)
+                update.message.reply_text(f"I cancelled {job_removed} subscriptions.")
         else:
             update.message.reply_html(
                 "Sorry, I cannot understand that. Did you want to unsubscribe from "
