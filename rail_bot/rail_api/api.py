@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from zeep import Client
 from zeep import xsd
@@ -71,7 +72,9 @@ def departure_board(from_station: str, to_station, rows=None):
     return msg
 
 
-def next_departure_status(from_station: str, to_station: str, timeOffset=0):
+def next_departure_status(
+    from_station: str, to_station: str, timeOffset: int=0
+) -> Optional[Travel]:
     res = client.service.GetNextDepartures(
         crs=from_station.upper(),
         filterList=[to_station.upper()],
@@ -79,5 +82,8 @@ def next_departure_status(from_station: str, to_station: str, timeOffset=0):
         _soapheaders=[header_value],
     )
     departure_service = res.departures.destination[0].service
-    travel = Travel.from_departure_service(departure_service)
+    try:
+        travel = Travel.from_departure_service(departure_service)
+    except AttributeError:
+        travel = None
     return travel

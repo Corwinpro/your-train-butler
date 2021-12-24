@@ -67,6 +67,11 @@ def get_travel_status(context: CallbackContext) -> None:
         return
 
     current_travel_obj = next_departure_status(origin, destination)
+    if current_travel_obj is None:
+        text = "❗ It seems that your travel has been cancelled. ❗\n"
+        text += "I am sorry I could not find any additional information."
+        context.bot.send_message(chat_id, text=text)
+        return
 
     if current_travel_obj.is_delayed or current_travel_obj.is_cancelled:
         rerun_in = 2 * 60  # seconds
