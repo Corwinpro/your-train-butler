@@ -7,7 +7,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext.jobqueue import JobQueue
 from telegram.callbackquery import CallbackQuery
 
-from rail_bot.bot.service.job_service import DailyJob, create_job_service
+from rail_bot.bot.service.job_service import create_job_service
 from rail_bot.bot.subscription.common import UNSUBSCRIBE, subscribe_departure_job_name
 
 from rail_bot.bot.utils import parse_time
@@ -31,10 +31,10 @@ def unsubscribe_button(update: Update, context: CallbackContext) -> None:
     if context.job_queue is None:
         return
 
-    origin, destination, departure_time = query.data.split(" ")
+    chat_id, origin, destination, departure_time = query.data.split(" ")
     departure_time = parse_time(departure_time)
     unsubscribe_one(
-        update.message.chat_id,
+        chat_id,
         origin,
         destination,
         departure_time,
@@ -69,7 +69,7 @@ def unsubscribe_info(chat_id: int) -> Tuple[str, Optional[InlineKeyboardMarkup]]
             f"- From {job.origin.upper()} to {job.destination.upper()} at {time_str}"
         )
 
-        job_data = " ".join((job.origin, job.destination, time_str))
+        job_data = " ".join((str(chat_id), job.origin, job.destination, time_str))
         keyboard.append([InlineKeyboardButton(key_text, callback_data=job_data)])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
