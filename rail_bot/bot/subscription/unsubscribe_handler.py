@@ -32,12 +32,13 @@ def unsubscribe_button(update: Update, context: CallbackContext) -> None:
         return
 
     print(query.data)
-    chat_id, origin, destination, departure_time = query.data.split(" ")
+    chat_id, origin, destination, departure_time_str = query.data.split(" ")
+    departure_time = parse_time(departure_time_str)
     unsubscribe_one(
         chat_id,
         origin,
         destination,
-        parse_time(departure_time),
+        departure_time,
         context.job_queue,
     )
 
@@ -74,7 +75,7 @@ def unsubscribe_info(chat_id: int) -> Tuple[str, Optional[InlineKeyboardMarkup]]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
     text += (
-        "Or, use <code>/unsubscibe ORIGIN DESTINATION HH:MM</code> to unsubscribe"
+        f"Or, use <code>/{UNSUBSCRIBE} ORIGIN DESTINATION HH:MM</code> to unsubscribe"
         f" from a service update, and <code>/{UNSUBSCRIBE} all</code> to cancel"
         " all notifications."
     )
