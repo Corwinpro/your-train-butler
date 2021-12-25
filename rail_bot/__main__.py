@@ -39,7 +39,8 @@ def main():
     dispatcher.add_handler(start_handler())
     dispatcher.add_handler(board_handler())
     dispatcher.add_handler(subscribe_handler())
-    dispatcher.add_handler(unsubscribe_handler())
+    for handler in unsubscribe_handler():
+        dispatcher.add_handler(handler)
     dispatcher.add_handler(help_handler())
 
     # Must go very last

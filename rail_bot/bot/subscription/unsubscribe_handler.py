@@ -1,12 +1,13 @@
+import datetime
 import logging
 from typing import Optional, Tuple
 
-from telegram.ext import CallbackContext, CommandHandler
+from telegram.ext import CallbackContext, CommandHandler, CallbackQueryHandler
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext.jobqueue import JobQueue
 from telegram.callbackquery import CallbackQuery
 
-from rail_bot.bot.service.job_service import create_job_service
+from rail_bot.bot.service.job_service import DailyJob, create_job_service
 from rail_bot.bot.subscription.common import UNSUBSCRIBE, subscribe_departure_job_name
 
 from rail_bot.bot.utils import parse_time
@@ -18,23 +19,8 @@ logger = logging.getLogger(__name__)
 
 UNSUBSCRIBE = "unsubscribe"
 
-def test_but(update: Update, context: CallbackContext) -> None:
-    """Sends a message with three inline buttons attached."""
 
-    keyboard = [
-        [
-            InlineKeyboardButton("Option 1", callback_data="1"),
-            InlineKeyboardButton("Option 2", callback_data="2"),
-        ],
-        [InlineKeyboardButton("Option 3", callback_data="3")],
-    ]
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    update.message.reply_text("Please choose:", reply_markup=reply_markup)
-
-
-def button(update: Update, context: CallbackContext) -> None:
+def unsubscribe_button(update: Update, context: CallbackContext) -> None:
     """Parses the CallbackQuery and updates the message text."""
     query: CallbackQuery = update.callback_query
 
@@ -42,9 +28,20 @@ def button(update: Update, context: CallbackContext) -> None:
     # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
     query.answer()
 
-    reply_markup = None
+    if context.job_queue is None:
+        return
+
+    job: DailyJob = query.data
+    unsubscribe_one(
+        update.message.chat_id, job.origin, job.destination, job.departure_time, context.job_queue
+    )
+
+    time = f"{job.departure_time.hour}:{job.departure_time.minute}"
     query.edit_message_text(
-        text=f"Selected option: {query.data}", reply_markup=reply_markup
+        text=(
+            f"Unsubscribed from:\nTravel from {job.origin.upper()} to "
+            f"{job.destination.upper()} at {time}"
+        )
     )
 
 
@@ -53,16 +50,16 @@ def unsubscribe_info(chat_id: int) -> Tuple[str, Optional[InlineKeyboardMarkup]]
 
     active_jobs = job_service.get_jobs(chat_id=chat_id)
     if len(active_jobs) == 0:
-        return ("You have no subscriptions.", None)
+        return "You have no subscriptions.", None
 
-    text = f"You have {len(active_jobs)} subscriptions.\nClick to unsubscribe:"
+    text = f"You have {len(active_jobs)} subscriptions.\nClick to unsubscribe. "
     keyboard = []
     for job in sorted(active_jobs, key=lambda job: job.departure_time):
         time = f"{job.departure_time.hour}:{job.departure_time.minute}"
         key_text = (
             f"- From {job.origin.upper()} to {job.destination.upper()} at {time}\n"
         )
-        keyboard.append([InlineKeyboardButton(key_text, callback_data="1")])
+        keyboard.append([InlineKeyboardButton(key_text, callback_data=job)])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
     text += (
@@ -88,10 +85,8 @@ def unsubscribe_all(chat_id: int, option: str, job_queue: JobQueue) -> str:
 
 
 def unsubscribe_one(
-    chat_id: int, origin: str, destination: str, departure_time_str: str, job_queue: JobQueue
+    chat_id: int, origin: str, destination: str, departure_time: datetime.time, job_queue: JobQueue
 ) -> str:
-
-    departure_time = parse_time(departure_time_str)
 
     job_service = create_job_service()
     job_service.deactivate_job(
@@ -141,6 +136,7 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
         response = unsubscribe_all(chat_id, context.args[0], context.job_queue)
     elif len(context.args) == 3:
         origin, destination, departure_time = context.args
+        departure_time = parse_time(departure_time)
         response = unsubscribe_one(
             chat_id, origin, destination, departure_time, context.job_queue
         )
@@ -148,6 +144,8 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
 
 
 def unsubscribe_handler():
-    # updater.dispatcher.add_handler(CommandHandler("test", test_but))
-    # updater.dispatcher.add_handler(CallbackQueryHandler(button))
-    return CommandHandler(UNSUBSCRIBE, _unsubscribe_departure)
+    CallbackQueryHandler(unsubscribe_button)
+    return (
+        CommandHandler(UNSUBSCRIBE, _unsubscribe_departure),
+        CallbackQueryHandler(unsubscribe_button)
+    )
