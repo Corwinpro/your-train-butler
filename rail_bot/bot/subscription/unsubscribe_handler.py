@@ -1,8 +1,11 @@
 import logging
+from typing import Optional, Tuple
 
 from telegram.ext import CallbackContext, CommandHandler
-from telegram import Update
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext.jobqueue import JobQueue
+from telegram.callbackquery import CallbackQuery
+
 from rail_bot.bot.service.job_service import create_job_service
 from rail_bot.bot.subscription.common import UNSUBSCRIBE, subscribe_departure_job_name
 
@@ -15,26 +18,59 @@ logger = logging.getLogger(__name__)
 
 UNSUBSCRIBE = "unsubscribe"
 
+def test_but(update: Update, context: CallbackContext) -> None:
+    """Sends a message with three inline buttons attached."""
 
-def unsubscribe_info(chat_id: int) -> str:
+    keyboard = [
+        [
+            InlineKeyboardButton("Option 1", callback_data="1"),
+            InlineKeyboardButton("Option 2", callback_data="2"),
+        ],
+        [InlineKeyboardButton("Option 3", callback_data="3")],
+    ]
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    update.message.reply_text("Please choose:", reply_markup=reply_markup)
+
+
+def button(update: Update, context: CallbackContext) -> None:
+    """Parses the CallbackQuery and updates the message text."""
+    query: CallbackQuery = update.callback_query
+
+    # CallbackQueries need to be answered, even if no notification to the user is needed
+    # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
+    query.answer()
+
+    reply_markup = None
+    query.edit_message_text(
+        text=f"Selected option: {query.data}", reply_markup=reply_markup
+    )
+
+
+def unsubscribe_info(chat_id: int) -> Tuple[str, Optional[InlineKeyboardMarkup]]:
     job_service = create_job_service()
 
     active_jobs = job_service.get_jobs(chat_id=chat_id)
     if len(active_jobs) == 0:
-        return "You have no subscriptions."
+        return ("You have no subscriptions.", None)
 
-    text = f"You have {len(active_jobs)} subscriptions:\n"
+    text = f"You have {len(active_jobs)} subscriptions.\nClick to unsubscribe:"
+    keyboard = []
     for job in sorted(active_jobs, key=lambda job: job.departure_time):
         time = f"{job.departure_time.hour}:{job.departure_time.minute}"
-        text += (
+        key_text = (
             f"- From {job.origin.upper()} to {job.destination.upper()} at {time}\n"
         )
+        keyboard.append([InlineKeyboardButton(key_text, callback_data="1")])
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
     text += (
-        "Use <code>/unsubscibe ORIGIN DESTINATION HH:MM</code> to unsubscribe"
-        f" from a service update, or <code>/{UNSUBSCRIBE} all</code> to cancel"
+        "Or, use <code>/unsubscibe ORIGIN DESTINATION HH:MM</code> to unsubscribe"
+        f" from a service update, and <code>/{UNSUBSCRIBE} all</code> to cancel"
         " all notifications."
     )
-    return text
+    return text, reply_markup
 
 
 def unsubscribe_all(chat_id: int, option: str, job_queue: JobQueue) -> str:
@@ -98,8 +134,9 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
         return
 
     response = "I am sorry I cannot understand that."
+    markup = None
     if len(context.args) == 0:
-        response = unsubscribe_info(chat_id)
+        response, markup = unsubscribe_info(chat_id)
     elif len(context.args) == 1:
         response = unsubscribe_all(chat_id, context.args[0], context.job_queue)
     elif len(context.args) == 3:
@@ -107,8 +144,10 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
         response = unsubscribe_one(
             chat_id, origin, destination, departure_time, context.job_queue
         )
-    update.message.reply_html(response)
+    update.message.reply_html(response, reply_markup=markup)
 
 
 def unsubscribe_handler():
+    # updater.dispatcher.add_handler(CommandHandler("test", test_but))
+    # updater.dispatcher.add_handler(CallbackQueryHandler(button))
     return CommandHandler(UNSUBSCRIBE, _unsubscribe_departure)
