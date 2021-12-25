@@ -31,16 +31,21 @@ def unsubscribe_button(update: Update, context: CallbackContext) -> None:
     if context.job_queue is None:
         return
 
-    job: DailyJob = query.data
+    origin, destination, departure_time = query.data
+    departure_time = parse_time(departure_time)
     unsubscribe_one(
-        update.message.chat_id, job.origin, job.destination, job.departure_time, context.job_queue
+        update.message.chat_id,
+        origin,
+        destination,
+        departure_time,
+        context.job_queue,
     )
 
-    time = f"{job.departure_time.hour}:{job.departure_time.minute}"
+    time = f"{departure_time.hour}:{departure_time.minute}"
     query.edit_message_text(
         text=(
-            f"Unsubscribed from:\nTravel from {job.origin.upper()} to "
-            f"{job.destination.upper()} at {time}"
+            f"Unsubscribed from:\nTravel from {origin.upper()} to "
+            f"{destination.upper()} at {time}"
         )
     )
 
@@ -55,11 +60,16 @@ def unsubscribe_info(chat_id: int) -> Tuple[str, Optional[InlineKeyboardMarkup]]
     text = f"You have {len(active_jobs)} subscriptions.\nClick to unsubscribe. "
     keyboard = []
     for job in sorted(active_jobs, key=lambda job: job.departure_time):
-        time = f"{job.departure_time.hour}:{job.departure_time.minute}"
-        key_text = (
-            f"- From {job.origin.upper()} to {job.destination.upper()} at {time}\n"
+        time_str = (
+            str(job.departure_time.hour).zfill(2)
+            + ":"
+            + str(job.departure_time.minute).zfill(2)
         )
-        keyboard.append([InlineKeyboardButton(key_text, callback_data=job)])
+        key_text = (
+            f"- From {job.origin.upper()} to {job.destination.upper()} at {time_str}"
+        )
+        job_json = (job.origin, job.destination, time_str)
+        keyboard.append([InlineKeyboardButton(key_text, callback_data=job_json)])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
     text += (
@@ -85,7 +95,11 @@ def unsubscribe_all(chat_id: int, option: str, job_queue: JobQueue) -> str:
 
 
 def unsubscribe_one(
-    chat_id: int, origin: str, destination: str, departure_time: datetime.time, job_queue: JobQueue
+    chat_id: int,
+    origin: str,
+    destination: str,
+    departure_time: datetime.time,
+    job_queue: JobQueue,
 ) -> str:
 
     job_service = create_job_service()
@@ -147,5 +161,5 @@ def unsubscribe_handler():
     CallbackQueryHandler(unsubscribe_button)
     return (
         CommandHandler(UNSUBSCRIBE, _unsubscribe_departure),
-        CallbackQueryHandler(unsubscribe_button)
+        CallbackQueryHandler(unsubscribe_button),
     )
