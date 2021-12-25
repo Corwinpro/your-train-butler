@@ -42,7 +42,11 @@ def unsubscribe_button(update: Update, context: CallbackContext) -> None:
 
     job_service = create_job_service()
     active_jobs = job_service.get_jobs(chat_id=chat_id)
-    reply_markup = jobs_markup(active_jobs)
+    if len(active_jobs) == 0:
+        reply_markup = None
+        response += "\nYou have no subscriptions."
+    else:
+        reply_markup = jobs_markup(active_jobs)
 
     query.edit_message_text(
         text=response, parse_mode=ParseMode.HTML, reply_markup=reply_markup
