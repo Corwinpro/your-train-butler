@@ -3,7 +3,7 @@ import logging
 from telegram.ext import JobQueue
 
 from rail_bot.bot.service.job_service import create_job_service
-from rail_bot.bot.departure_subscription import subscribe_departure
+from rail_bot.bot.subscription.subscribe_handler import subscribe_departure
 
 logger = logging.getLogger(__name__)
 

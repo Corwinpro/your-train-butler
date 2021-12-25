@@ -11,13 +11,9 @@ from rail_bot.bot.service.job_service import create_job_service
 from rail_bot.bot.utils import parse_time, shift_time
 from rail_bot.bot.job_manager import remove_jobs_by_prefix
 from rail_bot.rail_api.api import next_departure_status
-
+from rail_bot.bot.subscription.common import SUBSCRIBE, subscribe_departure_job_name
 
 logger = logging.getLogger(__name__)
-
-
-UNSUBSCRIBE = "unsubscribe"
-SUBSCRIBE = "subscribe"
 
 
 def parse_subscription_info(
@@ -58,12 +54,6 @@ def parse_subscription_info(
         update.message.reply_text(response)
 
     return wrapped
-
-
-def subscribe_departure_job_name(
-    chat_id: int, origin: str, destination: str, departure_time: datetime.time
-) -> str:
-    return f"{chat_id}-{origin.lower()}-{destination.lower()}-{departure_time}"
 
 
 def get_travel_status(context: CallbackContext) -> None:
@@ -181,90 +171,11 @@ def _subscribe_departure(
         departure_time=departure_time,
     )
 
-    response = subscribe_departure(job_queue, chat_id, origin, destination, departure_time)
+    response = subscribe_departure(
+        job_queue, chat_id, origin, destination, departure_time
+    )
     return response
-
-
-def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
-    """Remove the job if the user changed their mind."""
-    if context.args is None:
-        logger.info(f"Got `None` as context.args in {update.message.chat_id}.")
-        return
-
-    chat_id: int = update.message.chat_id
-
-    if context.job_queue is None:
-        logger.info(
-            f"Got `None` as context.job_queue in `get_travel_status` with {chat_id}."
-        )
-        return
-
-    job_service = create_job_service()
-
-    if len(context.args) == 0:
-        active_jobs = job_service.get_jobs(chat_id=chat_id)
-        if len(active_jobs) == 0:
-            update.message.reply_text("You have no subscriptions.")
-            return
-
-        text = f"You have {len(active_jobs)} subscriptions:\n"
-        for job in sorted(active_jobs, key=lambda job: job.departure_time):
-            time = f"{job.departure_time.hour}:{job.departure_time.minute}"
-            text += (
-                f"- From {job.origin.upper()} to {job.destination.upper()} at {time}\n"
-            )
-        text += (
-            "Use <code>/unsubscibe ORIGIN DESTINATION HH:MM</code> to unsubscribe"
-            f" from a service update, or <code>/{UNSUBSCRIBE} all</code> to cancel"
-            " all notifications."
-        )
-        update.message.reply_html(text)
-        return
-
-    if len(context.args) == 1:
-        if context.args[0] == "all":
-            job_service.deactivate_job(chat_id=chat_id)
-            if context.job_queue is not None:
-                job_removed = remove_jobs_by_prefix(str(chat_id), context.job_queue)
-                update.message.reply_text(f"I cancelled {job_removed} subscriptions.")
-        else:
-            update.message.reply_html(
-                "Sorry, I cannot understand that. Did you want to unsubscribe from "
-                f"all notifications? For that please use\n<code>/{UNSUBSCRIBE} all</code>"
-            )
-        return
-
-    origin, destination, departure_time = context.args
-    departure_time = parse_time(departure_time)
-
-    job_service.deactivate_job(
-        chat_id=chat_id,
-        origin=origin,
-        destination=destination,
-        departure_time=departure_time,
-    )
-
-    job_name = subscribe_departure_job_name(
-        chat_id, origin, destination, departure_time
-    )
-    job_removed = remove_jobs_by_prefix(job_name, context.job_queue)
-    if job_removed != 0:
-        text = (
-            f"Subscription from {origin} to {destination} at {departure_time} "
-            "cancelled!"
-        )
-    else:
-        text = (
-            f"I could not find subscriptions to the service between {origin} "
-            f" and {destination} at {departure_time}. See <code>/{UNSUBSCRIBE}</code>"
-            f" for more information about your subscriptions."
-        )
-    update.message.reply_html(text)
 
 
 def subscribe_handler():
     return CommandHandler(SUBSCRIBE, _subscribe_departure)
-
-
-def unsubscribe_handler():
-    return CommandHandler(UNSUBSCRIBE, _unsubscribe_departure)

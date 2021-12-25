@@ -6,7 +6,8 @@ from telegram.ext import Updater
 
 from rail_bot.bot.start_handler import start_handler
 from rail_bot.bot.board_handler import board_handler
-from rail_bot.bot.departure_subscription import subscribe_handler, unsubscribe_handler
+from rail_bot.bot.subscription.subscribe_handler import subscribe_handler
+from rail_bot.bot.subscription.unsubscribe_handler import unsubscribe_handler
 from rail_bot.bot.unknown_handler import unknown_command_handler
 from rail_bot.bot.job_recovery import recover_jobs
 from rail_bot.bot.help_handler import help_handler
@@ -35,19 +36,19 @@ from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, Callback
 
 keyboard = [
     [
-        InlineKeyboardButton("Option 1", callback_data='1'),
-        InlineKeyboardButton("Option 2", callback_data='2'),
+        InlineKeyboardButton("Option 1", callback_data="1"),
+        InlineKeyboardButton("Option 2", callback_data="2"),
     ],
-    [InlineKeyboardButton("Option 3", callback_data='3')],
+    [InlineKeyboardButton("Option 3", callback_data="3")],
 ]
 
 reply_markup = InlineKeyboardMarkup(keyboard)
 
+
 def test_but(update: Update, context: CallbackContext) -> None:
     """Sends a message with three inline buttons attached."""
 
-
-    update.message.reply_text('Please choose:', reply_markup=reply_markup)
+    update.message.reply_text("Please choose:", reply_markup=reply_markup)
 
 
 def button(update: Update, context: CallbackContext) -> None:
@@ -58,7 +59,10 @@ def button(update: Update, context: CallbackContext) -> None:
     # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
     query.answer()
 
-    query.edit_message_text(text=f"Selected option: {query.data}", reply_markup=reply_markup)
+    query.edit_message_text(
+        text=f"Selected option: {query.data}", reply_markup=reply_markup
+    )
+
 
 def main():
     updater = Updater(token=TELEGRAM_TOKEN)
@@ -73,7 +77,7 @@ def main():
     dispatcher.add_handler(unsubscribe_handler())
     dispatcher.add_handler(help_handler())
 
-    updater.dispatcher.add_handler(CommandHandler('test', test_but))
+    updater.dispatcher.add_handler(CommandHandler("test", test_but))
     updater.dispatcher.add_handler(CallbackQueryHandler(button))
 
     # Must go very last

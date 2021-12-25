@@ -1,7 +1,7 @@
 from telegram.ext import CallbackContext, CommandHandler
 from telegram import Update
 
-from rail_bot.bot.departure_subscription import UNSUBSCRIBE
+from rail_bot.bot.subscription.common import UNSUBSCRIBE
 
 
 def help(update: Update, context: CallbackContext):
