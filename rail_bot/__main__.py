@@ -1,6 +1,5 @@
 import logging
 import os
-from telegram.callbackquery import CallbackQuery
 
 from telegram.ext import Updater
 
@@ -30,40 +29,6 @@ TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "")
 # logger.info("Webhook started.")
 
 
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
-
-
-keyboard = [
-    [
-        InlineKeyboardButton("Option 1", callback_data="1"),
-        InlineKeyboardButton("Option 2", callback_data="2"),
-    ],
-    [InlineKeyboardButton("Option 3", callback_data="3")],
-]
-
-reply_markup = InlineKeyboardMarkup(keyboard)
-
-
-def test_but(update: Update, context: CallbackContext) -> None:
-    """Sends a message with three inline buttons attached."""
-
-    update.message.reply_text("Please choose:", reply_markup=reply_markup)
-
-
-def button(update: Update, context: CallbackContext) -> None:
-    """Parses the CallbackQuery and updates the message text."""
-    query: CallbackQuery = update.callback_query
-
-    # CallbackQueries need to be answered, even if no notification to the user is needed
-    # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
-    query.answer()
-
-    query.edit_message_text(
-        text=f"Selected option: {query.data}", reply_markup=reply_markup
-    )
-
-
 def main():
     updater = Updater(token=TELEGRAM_TOKEN)
     dispatcher = updater.dispatcher
@@ -76,9 +41,6 @@ def main():
     dispatcher.add_handler(subscribe_handler())
     dispatcher.add_handler(unsubscribe_handler())
     dispatcher.add_handler(help_handler())
-
-    updater.dispatcher.add_handler(CommandHandler("test", test_but))
-    updater.dispatcher.add_handler(CallbackQueryHandler(button))
 
     # Must go very last
     dispatcher.add_handler(unknown_command_handler())
