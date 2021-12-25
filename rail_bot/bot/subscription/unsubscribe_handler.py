@@ -31,7 +31,7 @@ def unsubscribe_button(update: Update, context: CallbackContext) -> None:
     if context.job_queue is None:
         return
 
-    origin, destination, departure_time = query.data
+    origin, destination, departure_time = query.data.split(" ")
     departure_time = parse_time(departure_time)
     unsubscribe_one(
         update.message.chat_id,
@@ -68,8 +68,9 @@ def unsubscribe_info(chat_id: int) -> Tuple[str, Optional[InlineKeyboardMarkup]]
         key_text = (
             f"- From {job.origin.upper()} to {job.destination.upper()} at {time_str}"
         )
-        job_json = (job.origin, job.destination, time_str)
-        keyboard.append([InlineKeyboardButton(key_text, callback_data=job_json)])
+
+        job_data = " ".join((job.origin, job.destination, time_str))
+        keyboard.append([InlineKeyboardButton(key_text, callback_data=job_data)])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
     text += (
