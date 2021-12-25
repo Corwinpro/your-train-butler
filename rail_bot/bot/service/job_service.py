@@ -1,3 +1,4 @@
+from datetime import datetime, time
 import os
 from typing import List
 
@@ -67,7 +68,9 @@ class JobService:
 
         return jobs
 
-    def add_job(self, chat_id, origin, destination, departure_time):
+    def add_job(
+        self, chat_id: int, origin: str, destination: str, departure_time: time
+    ):
         job = DailyJob(
             chat_id=chat_id,
             origin=origin,

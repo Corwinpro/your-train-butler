@@ -1,11 +1,11 @@
 import os
 from typing import Optional
 
-from zeep import Client
+from zeep.client import Client
 from zeep import xsd
 from zeep.plugins import HistoryPlugin
 
-from rail_bot.rail_api.travel import Travel, TravelDiscruptionInfo
+from rail_bot.rail_api.travel import Travel
 
 
 LDB_TOKEN = os.environ.get("LDB_TOKEN", "")

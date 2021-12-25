@@ -17,11 +17,24 @@ logger = logging.getLogger(__name__)
 
 
 UNSUBSCRIBE = "unsubscribe"
+SUBSCRIBE = "subscribe"
 
 
-def parse_subscription_info(func: Callable[[Update, CallbackContext], None]):
+def parse_subscription_info(
+    func: Callable[[JobQueue, int, str, str, datetime.time], str]
+):
     @functools.wraps(func)
     def wrapped(update: Update, context: CallbackContext):
+        chat_id = update.message.chat_id
+
+        if context.args is None:
+            logger.info(f"Got `None` as context.args in `{func}` with {chat_id}.")
+            return
+
+        if context.job_queue is None:
+            logger.info(f"Got `None` as context.job_queue in `{func}` with {chat_id}.")
+            return
+
         try:
             origin, destination, departure_time = context.args
         except ValueError:
@@ -39,9 +52,10 @@ def parse_subscription_info(func: Callable[[Update, CallbackContext], None]):
             update.message.reply_text(f"{e!r}")
             return
 
-        context.args[2] = departure_time
+        job_queue = context.job_queue
 
-        func(update, context)
+        response = func(job_queue, chat_id, origin, destination, departure_time)
+        update.message.reply_text(response)
 
     return wrapped
 
@@ -60,6 +74,14 @@ def get_travel_status(context: CallbackContext) -> None:
 
     This function is executed in a JobQueue.
     """
+    if context.job is None:
+        logger.info(f"Got `None` as context.job in `get_travel_status`.")
+        return
+
+    if context.job_queue is None:
+        logger.info(f"Got `None` as context.job_queue in `get_travel_status`.")
+        return
+
     logger.info(f"get_travel_status: {context.job.context}")
 
     chat_id, origin, destination, time, travel_obj = context.job.context
@@ -96,33 +118,13 @@ def get_travel_status(context: CallbackContext) -> None:
     )
 
 
-def initiate_status_check(context: CallbackContext) -> None:
-    """Initiate a sequence of checks for railway service disruption.
-
-    This function is executed in a JobQueue.
-    """
-    chat_id, origin, destination, time = context.job.context
-    logger.info(f"initiate_status_check: {context.job.context}")
-
-    job_name = (
-        subscribe_departure_job_name(chat_id, origin, destination, time)
-        + f"-{datetime.datetime.now()}"
-    )
-    context.job_queue.run_once(
-        get_travel_status,
-        when=1,
-        context=(chat_id, origin, destination, time, None),
-        name=job_name,
-    )
-
-
 def subscribe_departure(
     job_queue: JobQueue,
     chat_id: int,
     origin: str,
     destination: str,
     departure_time: datetime.time,
-):
+) -> str:
     datetime_now = datetime.datetime.now()
     job_name = subscribe_departure_job_name(
         chat_id, origin, destination, departure_time
@@ -163,21 +165,24 @@ def subscribe_departure(
 
 
 @parse_subscription_info
-def _subscribe_departure(update: Update, context: CallbackContext) -> None:
-    origin, destination, departure_time = context.args
+def _subscribe_departure(
+    job_queue: JobQueue,
+    chat_id: int,
+    origin: str,
+    destination: str,
+    departure_time: datetime.time,
+) -> str:
 
     job_service = create_job_service()
     job_service.add_job(
-        chat_id=update.message.chat_id,
+        chat_id=chat_id,
         origin=origin,
         destination=destination,
         departure_time=departure_time,
     )
 
-    response = subscribe_departure(
-        context.job_queue, update.message.chat_id, *context.args
-    )
-    update.message.reply_text(response)
+    response = subscribe_departure(job_queue, chat_id, origin, destination, departure_time)
+    return response
 
 
 def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
@@ -186,8 +191,15 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
         logger.info(f"Got `None` as context.args in {update.message.chat_id}.")
         return
 
-    job_service = create_job_service()
     chat_id: int = update.message.chat_id
+
+    if context.job_queue is None:
+        logger.info(
+            f"Got `None` as context.job_queue in `get_travel_status` with {chat_id}."
+        )
+        return
+
+    job_service = create_job_service()
 
     if len(context.args) == 0:
         active_jobs = job_service.get_jobs(chat_id=chat_id)
@@ -203,8 +215,8 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
             )
         text += (
             "Use <code>/unsubscibe ORIGIN DESTINATION HH:MM</code> to unsubscribe"
-            f" from a service update, or <code>/{UNSUBSCRIBE} all</code> to cancel all"
-            "notifications."
+            f" from a service update, or <code>/{UNSUBSCRIBE} all</code> to cancel"
+            " all notifications."
         )
         update.message.reply_html(text)
         return
@@ -251,7 +263,7 @@ def _unsubscribe_departure(update: Update, context: CallbackContext) -> None:
 
 
 def subscribe_handler():
-    return CommandHandler("subscribe", _subscribe_departure)
+    return CommandHandler(SUBSCRIBE, _subscribe_departure)
 
 
 def unsubscribe_handler():
