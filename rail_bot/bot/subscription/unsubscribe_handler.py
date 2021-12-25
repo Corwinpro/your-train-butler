@@ -31,13 +31,13 @@ def unsubscribe_button(update: Update, context: CallbackContext) -> None:
     if context.job_queue is None:
         return
 
+    print(query.data)
     chat_id, origin, destination, departure_time = query.data.split(" ")
-    departure_time = parse_time(departure_time)
     unsubscribe_one(
         chat_id,
         origin,
         destination,
-        departure_time,
+        parse_time(departure_time),
         context.job_queue,
     )
 
