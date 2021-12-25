@@ -3,7 +3,7 @@ import logging
 from typing import Optional, Tuple
 
 from telegram.ext import CallbackContext, CommandHandler, CallbackQueryHandler
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
 from telegram.ext.jobqueue import JobQueue
 from telegram.callbackquery import CallbackQuery
 
@@ -22,33 +22,25 @@ UNSUBSCRIBE = "unsubscribe"
 
 def unsubscribe_button(update: Update, context: CallbackContext) -> None:
     """Parses the CallbackQuery and updates the message text."""
-    query: CallbackQuery = update.callback_query
 
     # CallbackQueries need to be answered, even if no notification to the user is needed
     # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
+    query: CallbackQuery = update.callback_query
     query.answer()
 
     if context.job_queue is None:
         return
 
-    print(query.data)
     chat_id, origin, destination, departure_time_str = query.data.split(" ")
-    departure_time = parse_time(departure_time_str)
-    unsubscribe_one(
+    response = unsubscribe_one(
         chat_id,
         origin,
         destination,
-        departure_time,
+        parse_time(departure_time_str),
         context.job_queue,
     )
 
-    time = f"{departure_time.hour}:{departure_time.minute}"
-    query.edit_message_text(
-        text=(
-            f"Unsubscribed from:\nTravel from {origin.upper()} to "
-            f"{destination.upper()} at {time}"
-        )
-    )
+    query.edit_message_text(text=response, parse_mode=ParseMode.HTML)
 
 
 def unsubscribe_info(chat_id: int) -> Tuple[str, Optional[InlineKeyboardMarkup]]:
@@ -75,7 +67,7 @@ def unsubscribe_info(chat_id: int) -> Tuple[str, Optional[InlineKeyboardMarkup]]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
     text += (
-        f"Or, use <code>/{UNSUBSCRIBE} ORIGIN DESTINATION HH:MM</code> to unsubscribe"
+        f"Or use <code>/{UNSUBSCRIBE} ORIGIN DESTINATION HH:MM</code> to unsubscribe"
         f" from a service update, and <code>/{UNSUBSCRIBE} all</code> to cancel"
         " all notifications."
     )
@@ -116,15 +108,18 @@ def unsubscribe_one(
         chat_id, origin, destination, departure_time
     )
     job_removed = remove_jobs_by_prefix(job_name, job_queue)
+    departure_time_str = (
+        str(departure_time.hour).zfill(2) + ":" + str(departure_time.minute).zfill(2)
+    )
     if job_removed != 0:
         text = (
-            f"Subscription from {origin} to {destination} at {departure_time} "
+            f"Subscription from {origin} to {destination} at {departure_time_str} "
             "cancelled!"
         )
     else:
         text = (
             f"I could not find subscriptions to the service between {origin} "
-            f" and {destination} at {departure_time}. See <code>/{UNSUBSCRIBE}</code>"
+            f" and {destination} at {departure_time_str}. See <code>/{UNSUBSCRIBE}</code>"
             f" for more information about your subscriptions."
         )
     return text
