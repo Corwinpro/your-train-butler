@@ -32,7 +32,7 @@ def unsubscribe_button(update: Update, context: CallbackContext) -> None:
         return
 
     chat_id, origin, destination, departure_time_str = query.data.split(" ")
-    response = unsubscribe_one(
+    unsubscribe_response = unsubscribe_one(
         chat_id,
         origin,
         destination,
@@ -40,13 +40,17 @@ def unsubscribe_button(update: Update, context: CallbackContext) -> None:
         context.job_queue,
     )
 
-    job_service = create_job_service()
-    active_jobs = job_service.get_jobs(chat_id=chat_id)
-    if len(active_jobs) == 0:
-        reply_markup = None
-        response += "\nYou have no subscriptions."
-    else:
-        reply_markup = jobs_markup(active_jobs)
+    response, reply_markup = unsubscribe_info(chat_id)
+    if reply_markup is None:
+        response = unsubscribe_response + "\n" + response
+
+    # job_service = create_job_service()
+    # active_jobs = job_service.get_jobs(chat_id=chat_id)
+    # if len(active_jobs) == 0:
+    #     reply_markup = None
+    #     response += "\nYou have no subscriptions."
+    # else:
+    #     reply_markup = jobs_markup(active_jobs)
 
     query.edit_message_text(
         text=response, parse_mode=ParseMode.HTML, reply_markup=reply_markup
