@@ -129,8 +129,8 @@ def unsubscribe_one(
     )
     if job_removed != 0:
         text = (
-            f"Subscription from {origin} to {destination} at {departure_time_str} "
-            "cancelled!"
+            f"Subscription from {origin.upper()} to {destination.upper()} "
+            "at {departure_time_str} cancelled!"
         )
     else:
         text = (
