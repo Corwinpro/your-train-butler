@@ -41,16 +41,7 @@ def unsubscribe_button(update: Update, context: CallbackContext) -> None:
     )
 
     response, reply_markup = unsubscribe_info(chat_id)
-    if reply_markup is None:
-        response = unsubscribe_response + "\n" + response
-
-    # job_service = create_job_service()
-    # active_jobs = job_service.get_jobs(chat_id=chat_id)
-    # if len(active_jobs) == 0:
-    #     reply_markup = None
-    #     response += "\nYou have no subscriptions."
-    # else:
-    #     reply_markup = jobs_markup(active_jobs)
+    response = unsubscribe_response + "\n" + response
 
     query.edit_message_text(
         text=response, parse_mode=ParseMode.HTML, reply_markup=reply_markup
@@ -134,13 +125,13 @@ def unsubscribe_one(
     if job_removed != 0:
         text = (
             f"Subscription from {origin.upper()} to {destination.upper()} "
-            "at {departure_time_str} cancelled!"
+            f"at {departure_time_str} cancelled!"
         )
     else:
         text = (
-            f"I could not find subscriptions to the service between {origin} "
-            f" and {destination} at {departure_time_str}. See <code>/{UNSUBSCRIBE}</code>"
-            f" for more information about your subscriptions."
+            f"I could not find subscriptions to the service between {origin.upper()} "
+            f" and {destination.upper()} at {departure_time_str}. See "
+            f"<code>/{UNSUBSCRIBE}</code> for more information about your subscriptions."
         )
     return text
 
