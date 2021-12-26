@@ -53,10 +53,10 @@ def departure_board(from_station: str, to_station, rows=None):
         )
 
     if res.trainServices is None:
+        _to = f" to {to_station!r}" if to_station is not None else ""
         return (
-            f"Could not retrieve board information for trains from "
-            f"{from_station!r} to {to_station!r}. "
-            "Are the station codes correct?"
+            f"Could not retrieve board information for trains from {from_station}"
+            f"{_to}. Are the station codes correct?"
         )
 
     msg = f"Trains at {res.locationName}\n"

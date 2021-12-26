@@ -6,8 +6,8 @@ from rail_bot.bot.subscription.common import UNSUBSCRIBE
 
 def help(update: Update, context: CallbackContext):
     text = (
-        "<b>Train Check Bot</b>🚂\n"
-        "Hey there! I am your daily rail butler. I can:\n"
+        "<b>Train Check Bot</b>🚂\n\n"
+        "Hey there! I am your personal rail butler. I can:\n"
         "- Tell you about live departures from a particular station:\n\n"
         "    <code>/board KGX</code>\n\n"
         "  or between two stations:\n\n"
@@ -18,8 +18,9 @@ def help(update: Update, context: CallbackContext):
         "  To subscribe to a service update, let me know about your origin "
         "station, your destination, and the departure time:\n\n"
         "  <code>/subscribe KGX CBG 12:23</code>\n\n"
-        f"  To unsubscribe, type\n\n  <code>/{UNSUBSCRIBE} KGX CBG 12:23</code>\n\n"
-        f"  To see all your subscriptions, type:\n\n <code>/{UNSUBSCRIBE}</code>"
+        f"  To see all your subscriptions, type <code>/{UNSUBSCRIBE}</code>.\n"
+        f"  To unsubscribe from a service, type  <code>/{UNSUBSCRIBE} KGX CBG 12:23</code>\n"
+        f"  To unsubscribe from all notifications, type <code>/{UNSUBSCRIBE} all</code>"
     )
     update.message.reply_html(text)
 
