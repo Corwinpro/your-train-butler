@@ -8,10 +8,9 @@ def help(update: Update, context: CallbackContext):
     text = (
         "<b>Train Check Bot</b>🚂\n\n"
         "Hey there! I am your personal rail butler. I can:\n"
-        "- Tell you about live departures from a particular station:\n\n"
+        "- Tell you about live departures from a particular station:"
         "    <code>/board KGX</code>\n\n"
-        "  or between two stations:\n\n"
-        "    <code>/board KGX CBG</code>\n\n"
+        "  or between two stations:     <code>/board KGX CBG</code>\n\n"
         "- Notify you about service disruptions.\n"
         "  If you tell me which travels you would like to follow, I will "
         "notify you in case anything goes wrong with the train.\n"
