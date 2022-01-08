@@ -1,9 +1,10 @@
-from datetime import datetime, time
+from datetime import time
 import os
 from typing import List
 
 from sqlalchemy import create_engine, Column, Boolean, Integer, String, Time
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.decl_api import declarative_base
 from sqlalchemy.sql.schema import UniqueConstraint
 from sqlalchemy.exc import IntegrityError
 
