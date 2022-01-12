@@ -42,15 +42,7 @@ def main():
     # Must go very last
     dispatcher.add_handler(unknown_command_handler())
 
-    updater.start_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-        url_path=TELEGRAM_TOKEN,
-        webhook_url="https://train-check.herokuapp.com/" + TELEGRAM_TOKEN,
-    )
-    logger.info("Webhook started.")
-
-    # updater.start_polling()
+    updater.start_polling()
     updater.idle()
 
 
