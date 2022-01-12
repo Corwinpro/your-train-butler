@@ -1,5 +1,5 @@
-from telegram.ext import CallbackContext, CommandHandler
 from telegram import Update
+from telegram.ext import CallbackContext, CommandHandler
 
 from rail_bot.bot.subscription.common import SUBSCRIBE, UNSUBSCRIBE
 

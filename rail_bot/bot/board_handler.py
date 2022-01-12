@@ -1,10 +1,9 @@
 import logging
 
-from telegram.ext import CallbackContext, CommandHandler
 from telegram import Update
+from telegram.ext import CallbackContext, CommandHandler
 
 from rail_bot.rail_api.api import departure_board
-
 
 logger = logging.getLogger(__name__)
 

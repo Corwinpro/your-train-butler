@@ -1,12 +1,11 @@
 import os
 from typing import Optional
 
-from zeep.client import Client
 from zeep import xsd
+from zeep.client import Client
 from zeep.plugins import HistoryPlugin
 
 from rail_bot.rail_api.travel import Travel
-
 
 LDB_TOKEN = os.environ.get("LDB_TOKEN", "")
 WSDL = "http://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2017-10-01"
