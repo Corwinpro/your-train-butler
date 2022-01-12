@@ -11,7 +11,7 @@ This bot can:
 
 ## Give it a try!
 
-Find the `@train_check_bot` in Telegram, and type `/help` to see what the bot can do for you. This will show a list of available commands.
+Find the [`@train_check_bot`](https://t.me/train_check_bot) in Telegram, and type `/help` to see what the bot can do for you. This will show a list of available commands.
 
 ### Live departures
 
