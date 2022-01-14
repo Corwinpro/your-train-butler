@@ -40,10 +40,10 @@ class SubscribeController:
             origin, destination, departure_time = context.args
         except ValueError:
             update.message.reply_text(
-                f"Subscribe to service updates by specifying "
-                f"\n-The origin of your travel (e.g., 'kgx'),"
-                f"\n-The destination of your travel (e.g., 'cbg'),"
-                f"\n-Departure time (e.g., '12:23')."
+                "Subscribe to service updates by specifying "
+                "\n-The origin of your travel (e.g., 'kgx'),"
+                "\n-The destination of your travel (e.g., 'cbg'),"
+                "\n-Departure time (e.g., '12:23')."
             )
             return
 

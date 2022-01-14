@@ -1,16 +1,17 @@
 import datetime
+import os
 import unittest
 
 from rail_bot.bot.service.subscription_service import Base, SubscriptionService
 
 TEST_DB_USER = "postgres"
-TEST_DB_PASSWORD = "mysecretpassword"
+TEST_DB_PASSWORD = os.environ.get("TEST_DB_PASSWORD", "mysecretpassword")
 TEST_DB_HOST = "localhost"
 TEST_DB_PORT = 5432
 TEST_DB_URL = (
-    f"postgresql://{TEST_DB_USER}:{TEST_DB_PASSWORD}" f"@{TEST_DB_HOST}:{TEST_DB_PORT}"
+    f"postgresql://{TEST_DB_USER}:{TEST_DB_PASSWORD}@{TEST_DB_HOST}:{TEST_DB_PORT}"
 )
-TEST_DB_NAME = "test_db"
+TEST_DB_NAME = os.environ.get("TEST_DB_NAME", "test_db")
 
 
 class TestSubscriptionService(unittest.TestCase):
