@@ -149,7 +149,7 @@ class JobManager:
     def get_travel_status(self, context: CallbackContext):
         """TODO: this is super awkward it depends on a ``CallbackContext``."""
         if context.job is None:
-            logger.info(f"Got `None` as context.job in `get_travel_status`.")
+            logger.info("Got `None` as context.job in `get_travel_status`.")
             return
 
         logger.info(f"get_travel_status: {context.job.context}")
