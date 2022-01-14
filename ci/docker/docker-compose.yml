@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_PASSWORD: ${TEST_DB_PASSWORD}
       POSTGRES_DB: ${TEST_DB_NAME}
-      volumes:
-        - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      ports:
-        - "5432:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
