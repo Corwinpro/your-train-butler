@@ -16,13 +16,12 @@ env:
   TEST_DB_NAME: test_db
 
 jobs:
-  build:
-
+  test:
+    name: Run test
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: [3.9]
-
     steps:
     - uses: actions/checkout@v2
     - name: Build the testing stack
