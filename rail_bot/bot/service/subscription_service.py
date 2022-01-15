@@ -172,8 +172,22 @@ class SubscriptionService:
         return travels
 
 
+def get_db_url() -> str:
+    url = os.environ.get("DATABASE_URL", None)
+    if url is None:
+        db_user = os.environ["DB_USER"]
+        db_password = os.environ["DB_PASSWORD"]
+        db_host = os.environ["DB_HOST"]
+        db_port = int(os.environ["DB_PORT"])
+        db_name = os.environ["DB_NAME"]
+        url = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+    else:
+        url = url.replace("postgres://", "postgresql://")
+
+    return url
+
+
 def create_subscription_service() -> SubscriptionService:
-    url = os.environ["DATABASE_URL"]
-    url = url.replace("postgres://", "postgresql://")
+    url = get_db_url()
     service = SubscriptionService(url)
     return service
