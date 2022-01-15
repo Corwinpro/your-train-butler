@@ -5,6 +5,6 @@ RUN pip3 install --verbose -r requirements.txt
 
 COPY rail_bot rail_bot
 COPY setup.py setup.py
-RUN pip3 install .
+RUN python setup.py install
 
 CMD ["python3", "rail_bot"]
