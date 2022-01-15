@@ -1,0 +1,21 @@
+version: "3.1"
+
+networks:
+  app-network:
+    name: ${APP_NETWORK}
+    external: true
+
+services:
+  rail-bot:
+    image: train-butler-01
+    restart: always
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      LDB_TOKEN: ${LDB_TOKEN}
+      TELEGRAM_TOKEN: ${TELEGRAM_TOKEN}
+    networks:
+      - app-network
