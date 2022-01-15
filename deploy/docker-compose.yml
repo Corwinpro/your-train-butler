@@ -7,7 +7,7 @@ networks:
 
 services:
   rail-bot:
-    image: train-butler-01
+    image: corwinpro/train-butler
     restart: always
     environment:
       DB_USER: ${DB_USER}
