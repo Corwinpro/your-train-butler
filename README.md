@@ -7,7 +7,7 @@ This bot can:
 - Show live departures from a station or between stations,
 - Notify about service disruptions on your regular travels.
 
-*Note*: this is still a very much work in progress project. Please feel free to open an bug report, feature request, or a general suggestion.
+*Note*: this is still a very much work in progress project. Please feel free to open bug reports, feature requests, or a general suggestion.
 
 ## Give it a try!
 

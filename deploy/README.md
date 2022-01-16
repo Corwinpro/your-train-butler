@@ -45,7 +45,7 @@ To verify that all containers are running fine, do:
 
 ```sh
 $ docker-compose ps
-AME                    COMMAND                  SERVICE             STATUS              PORTS
+NAME                    COMMAND                  SERVICE             STATUS              PORTS
 rail_bot-train-bot-1    "python3 rail_bot"       train-bot           running
 rail_bot-watchtower-1   "/watchtower --inter…"   watchtower          running             8080/tcp
 train-bot-db            "docker-entrypoint.s…"   db                  running             0.0.0.0:5432->5432/tcp, :::5432->5432/tcp
@@ -57,7 +57,7 @@ To peek into the database, start an interactive session with the Postgres databa
 $ docker exec -it -u postgres train-bot-db psql
 ```
 
-to connect to the database, and interact with the data:
+to connect to the database and interact with the data:
 
 ```sh
 postgres=# \c train-bot-db

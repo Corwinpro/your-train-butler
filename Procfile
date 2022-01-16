@@ -1,1 +1,0 @@
-worker: python rail_bot/__main__.py
