@@ -1,11 +1,16 @@
-version: "3.1"
-
-networks:
-  app-network:
-    name: ${APP_NETWORK}
-    external: true
-
 services:
+  db:
+    image: postgres:14.1
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - app_db_data:/var/lib/postgresql/data
+
   rail-bot:
     image: corwinpro/train-butler
     restart: always
@@ -17,15 +22,19 @@ services:
       DB_NAME: ${DB_NAME}
       LDB_TOKEN: ${LDB_TOKEN}
       TELEGRAM_TOKEN: ${TELEGRAM_TOKEN}
-    networks:
-      - app-network
     labels:
       - "com.centurylinklabs.watchtower.scope=myscope"
+    depends_on:
+      - "db"
 
   watchtower:
     image: containrrr/watchtower
+    restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 10 --scope myscope
+    command: --interval 60 --scope myscope
     labels:
       - "com.centurylinklabs.watchtower.scope=myscope"
+
+volumes:
+  app_db_data:
