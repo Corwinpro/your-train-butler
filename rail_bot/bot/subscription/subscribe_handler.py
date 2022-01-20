@@ -1,7 +1,7 @@
 import datetime
 import logging
 
-from telegram import Update
+from telegram import BotCommand, Update
 from telegram.ext import CallbackContext, CommandHandler
 
 from rail_bot.bot.job_manager import JobManager
@@ -39,11 +39,12 @@ class SubscribeController:
         try:
             origin, destination, departure_time = context.args
         except ValueError:
-            update.message.reply_text(
+            update.message.reply_html(
                 "Subscribe to service updates by specifying "
-                "\n-The origin of your travel (e.g., 'kgx'),"
-                "\n-The destination of your travel (e.g., 'cbg'),"
-                "\n-Departure time (e.g., '12:23')."
+                "\n- The origin of your travel (e.g., <code>kgx</code>),"
+                "\n- The destination of your travel (e.g., <code>cbg</code>),"
+                "\n- Departure time (e.g., <code>12:23</code>)."
+                "\n For example: <code>/subscrive kgx cbg 12:23</code>."
             )
             return
 
@@ -60,5 +61,9 @@ class SubscribeController:
 
 
 def subscribe_handler(job_manager: JobManager):
+    description = "Subscribe to service updates."
     controller = SubscribeController(job_manager=job_manager)
-    return CommandHandler(SUBSCRIBE, controller.subscribe_departure)
+    return (
+        CommandHandler(SUBSCRIBE, controller.subscribe_departure),
+        BotCommand(SUBSCRIBE, description),
+    )

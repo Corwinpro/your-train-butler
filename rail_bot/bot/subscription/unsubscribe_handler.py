@@ -2,7 +2,13 @@ import datetime
 import logging
 from typing import List, Optional, Tuple
 
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode, Update
+from telegram import (
+    BotCommand,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    ParseMode,
+    Update,
+)
 from telegram.callbackquery import CallbackQuery
 from telegram.ext import CallbackContext, CallbackQueryHandler, CommandHandler
 
@@ -49,11 +55,13 @@ class UnsubscribeController:
             self.job_manager.service.get_travels(travel_id=subscription.travel_id)[0]
             for subscription in active_subscriptions
         ]
+        subscriptions_text = "subscription"
+        if len(active_subscriptions) != 1:
+            subscriptions_text = subscriptions_text + "s"
         text = (
-            f"You have {len(active_subscriptions)} subscriptions.\nClick to unsubscribe. "
-            f"Or use <code>/{UNSUBSCRIBE} ORIGIN DESTINATION HH:MM</code> to unsubscribe"
-            f" from a service update, and <code>/{UNSUBSCRIBE} all</code> to cancel"
-            " all notifications."
+            f"You have {len(active_subscriptions)} {subscriptions_text}."
+            "\nClick on one of the buttons below to unsubscribe. "
+            f"Or use <code>/{UNSUBSCRIBE} all</code> to cancel all notifications."
         )
         reply_markup = travels_markup(travels)
 
@@ -158,8 +166,12 @@ class UnsubscribeController:
 
 
 def unsubscribe_handler(job_manager: JobManager):
+    description = "See and manage your subscriptions."
     controller = UnsubscribeController(job_manager=job_manager)
     return (
-        CommandHandler(UNSUBSCRIBE, controller.unsubscribe_departure),
-        CallbackQueryHandler(controller.unsubscribe_button),
+        (
+            CommandHandler(UNSUBSCRIBE, controller.unsubscribe_departure),
+            BotCommand(UNSUBSCRIBE, description),
+        ),
+        (CallbackQueryHandler(controller.unsubscribe_button), None),
     )
