@@ -1,6 +1,6 @@
 import logging
 
-from telegram import Update
+from telegram import BotCommand, Update
 from telegram.ext import CallbackContext, CommandHandler
 
 from rail_bot.rail_api.api import departure_board
@@ -32,13 +32,14 @@ def send_departure_board(update: Update, context: CallbackContext):
     elif len(context.args) == 3:
         origin, destination, rows = context.args
     else:
-        context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text=(
-                "The '/board' command requires at least one argument: name"
-                " of the station (e.g. 'KGX'). See /help for more info."
-            ),
+        text = (
+            "To see all live departures from a station, use <code>/board ABC</code>"
+            ", where ABC is the station code.\n"
+            "To see live departures from one station to another station, use "
+            "<code>/board ABC DEF</code>, where ABC and DEF are the origin and "
+            "destination station codes."
         )
+        update.message.reply_html(text)
         return
 
     context.bot.send_message(
@@ -48,4 +49,8 @@ def send_departure_board(update: Update, context: CallbackContext):
 
 
 def board_handler():
-    return CommandHandler("board", send_departure_board)
+    command = "board"
+    description = "Live departures board."
+    return CommandHandler(command, send_departure_board), BotCommand(
+        command, description
+    )

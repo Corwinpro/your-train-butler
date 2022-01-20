@@ -1,4 +1,4 @@
-from telegram import Update
+from telegram import BotCommand, Update
 from telegram.ext import CallbackContext, CommandHandler
 
 from rail_bot.bot.subscription.common import SUBSCRIBE, UNSUBSCRIBE
@@ -25,4 +25,6 @@ def help(update: Update, context: CallbackContext):
 
 
 def help_handler():
-    return CommandHandler("help", help)
+    command = "help"
+    description = "I can tell you what I can do for you."
+    return CommandHandler(command, help), BotCommand(command, description)
