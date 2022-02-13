@@ -1,7 +1,7 @@
 from typing import Optional
 
 
-class TravelDiscruptionInfo:
+class TravelDisruptionInfo:
     def __init__(self, event_type, event_reason, is_active):
         self.event_type = event_type
         self.event_reason = event_reason
@@ -31,7 +31,7 @@ class TravelDiscruptionInfo:
         )
 
     def __eq__(self, __o: object) -> bool:
-        if not isinstance(__o, TravelDiscruptionInfo):
+        if not isinstance(__o, TravelDisruptionInfo):
             return False
 
         return (
@@ -46,8 +46,8 @@ class Travel:
         destination: str,
         scheduled_departure,
         service_type: str,
-        delay_info: TravelDiscruptionInfo = None,
-        cancel_info: TravelDiscruptionInfo = None,
+        delay_info: TravelDisruptionInfo = None,
+        cancel_info: TravelDisruptionInfo = None,
         scheduled_arrival=None,
         estimated_arrival=None,
         estimated_departure=None,
@@ -100,10 +100,10 @@ class Travel:
             destination=departure_service.destination.location[0].locationName,
             scheduled_departure=departure_service.std,
             service_type=departure_service.serviceType,
-            delay_info=TravelDiscruptionInfo.delay_from_departure_service(
+            delay_info=TravelDisruptionInfo.delay_from_departure_service(
                 departure_service
             ),
-            cancel_info=TravelDiscruptionInfo.cancel_from_departure_service(
+            cancel_info=TravelDisruptionInfo.cancel_from_departure_service(
                 departure_service
             ),
             scheduled_arrival=departure_service.sta,

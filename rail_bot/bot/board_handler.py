@@ -44,7 +44,7 @@ def send_departure_board(update: Update, context: CallbackContext):
 
     context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text=departure_board(origin, destination, rows),
+        text=departure_board(origin, destination, int(rows)),
     )
 
 

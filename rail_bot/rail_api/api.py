@@ -25,16 +25,17 @@ header = xsd.Element(
 )
 header_value = header(TokenValue=LDB_TOKEN)
 
+# Standard estimated departure time label string as returned by the LDB service
+ON_TIME_LABEL = "On time"
 
-def departure_board(from_station: str, to_station, rows=None):
+
+def departure_board(from_station: str, to_station: Optional[str], rows: Optional[int]=None):
     from_station = from_station.upper()
 
     if to_station is not None:
         to_station = to_station.upper()
 
-    if rows is not None:
-        rows = int(rows)
-    else:
+    if rows is None:
         rows = 10
 
     try:
@@ -61,7 +62,9 @@ def departure_board(from_station: str, to_station, rows=None):
     msg = f"Trains at {res.locationName}\n"
     for service in res.trainServices.service:
         destination = service.destination.location[0].locationName
-        msg += f"{service.std} to {destination} - {service.etd}"
+        msg += f"{service.std} {destination}"
+        if service.etd != ON_TIME_LABEL:
+            msg += f" - {service.etd}"
 
         if service.platform is not None:
             msg += f" (Platform {service.platform})"
