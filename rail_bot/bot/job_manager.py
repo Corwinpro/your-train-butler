@@ -6,7 +6,7 @@ from telegram.ext import JobQueue
 from telegram.ext.callbackcontext import CallbackContext
 
 from rail_bot.bot.service.subscription_service import SubscriptionService
-from rail_bot.bot.utils import shift_time
+from rail_bot.utils import shift_time
 from rail_bot.rail_api.api import next_departure_status
 from rail_bot.rail_api.travel import Travel
 
