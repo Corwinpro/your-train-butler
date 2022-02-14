@@ -9,6 +9,9 @@ logger = logging.getLogger(__name__)
 
 # Standard estimated departure time label string as returned by the LDB service
 ON_TIME_LABEL = "On time"
+# Estimated departure time label string as returned by the LDB service
+# for a cancelled service
+CANCELLED_LABEL = "Cancelled"
 
 
 TD = TypeVar("TD", bound="TravelDisruptionInfo")
@@ -33,6 +36,10 @@ class TravelDisruptionInfo:
 
     @classmethod
     def cancel_from_response_service(cls: Type[TD], service: Dict) -> TD:
+        is_active = False
+        if "isCancelled" in service:
+            is_active = True
+
         return cls(
             event_type="CANCEL",
             event_reason=service["cancelReason"],
@@ -79,17 +86,16 @@ class Travel:
         self.cancel_info = cancel_info
 
     def __repr__(self) -> str:
-        repr = (
-            f"Travel info:\n{self.service_type.title()} "
-            f"{self.origin} - {self.destination}\n"
-            f"Scheduled at {format_time(self.scheduled_departure)} "
-            f"(expected {format_time(self.estimated_departure) or 'unknown'})\n"
-        )
-        if self.is_delayed:
-            repr = f"WARNING: {self.delay_info!r}\n" + repr
-
+        repr = f"{self.service_type.title()} {self.origin} - {self.destination}"
         if self.is_cancelled:
-            repr = f"WARNING: {self.cancel_info!r}\n" + repr
+            repr = f"CANCELLED: {self.cancel_info!r}\n" + repr
+            return repr
+        if self.is_delayed:
+            repr = f"DELAYED: {self.delay_info!r}\n" + repr
+
+        repr += f"\nScheduled at {format_time(self.scheduled_departure)}"
+        if self.estimated_departure != self.scheduled_departure:
+            repr += f" (expected {format_time(self.estimated_departure) or 'unknown'})"
 
         return repr
 
@@ -122,6 +128,8 @@ class Travel:
         scheduled_departure = parse_time(destination_service["std"])
         if destination_service["etd"] == ON_TIME_LABEL:
             estimated_departure = scheduled_departure
+        elif destination_service["etd"] == CANCELLED_LABEL:
+            estimated_departure = destination_service["etd"]
         else:
             try:
                 estimated_departure = parse_time(destination_service["etd"])

@@ -1,0 +1,132 @@
+{
+    "locationName": "Earlswood (Surrey)",
+    "crs": "ELD",
+    "filterLocationName": null,
+    "filtercrs": null,
+    "filterType": null,
+    "nrccMessages": {
+        "message": [
+            {
+                "_value_1": "\nA reduced midweek service will operate on Southern, Thameslink and Great Northern routes until further notice. More information can be found in <a href=\"http://nationalrail.co.uk/service_disruptions/287384.aspx\">Latest Travel News</a>."
+            },
+            {
+                "_value_1": "\nFlooding at Earlswood (Surrey) is causing disruption at this station. Trains heading towards Gatwick Airport are currently unable to call at this station. More information can be found in <a href=\"http://nationalrail.co.uk/service_disruptions/289984.aspx\">Latest Travel News.</a>"
+            }
+        ]
+    },
+    "platformAvailable": true,
+    "areServicesAvailable": null,
+    "departures": {
+        "destination": [
+            {
+                "service": {
+                    "sta": "08:57",
+                    "eta": "Cancelled",
+                    "std": "08:57",
+                    "etd": "Cancelled",
+                    "platform": null,
+                    "operator": "Thameslink",
+                    "operatorCode": "TL",
+                    "isCircularRoute": null,
+                    "isCancelled": true,
+                    "filterLocationCancelled": null,
+                    "serviceType": "train",
+                    "length": 12,
+                    "detachFront": null,
+                    "isReverseFormation": null,
+                    "cancelReason": "This train has been cancelled because of flooding",
+                    "delayReason": "This train has been delayed by flooding",
+                    "serviceID": "mZqL7DGHliMbjTAq+SGyHQ==",
+                    "adhocAlerts": null,
+                    "rsid": null,
+                    "origin": {
+                        "location": [
+                            {
+                                "locationName": "Bedford",
+                                "crs": "BDM",
+                                "via": null,
+                                "futureChangeTo": null,
+                                "assocIsCancelled": null
+                            }
+                        ]
+                    },
+                    "destination": {
+                        "location": [
+                            {
+                                "locationName": "Gatwick Airport",
+                                "crs": "GTW",
+                                "via": null,
+                                "futureChangeTo": null,
+                                "assocIsCancelled": null
+                            }
+                        ]
+                    },
+                    "currentOrigins": null,
+                    "currentDestinations": null,
+                    "formation": {
+                        "avgLoading": 6,
+                        "coaches": null
+                    },
+                    "previousCallingPoints": null,
+                    "subsequentCallingPoints": {
+                        "callingPointList": [
+                            {
+                                "callingPoint": [
+                                    {
+                                        "locationName": "Salfords",
+                                        "crs": "SAF",
+                                        "st": "09:01",
+                                        "et": "On time",
+                                        "at": null,
+                                        "isCancelled": null,
+                                        "length": 12,
+                                        "detachFront": null,
+                                        "formation": {
+                                            "avgLoading": 5,
+                                            "coaches": null
+                                        },
+                                        "adhocAlerts": null
+                                    },
+                                    {
+                                        "locationName": "Horley",
+                                        "crs": "HOR",
+                                        "st": "09:04",
+                                        "et": "On time",
+                                        "at": null,
+                                        "isCancelled": null,
+                                        "length": 12,
+                                        "detachFront": null,
+                                        "formation": {
+                                            "avgLoading": 5,
+                                            "coaches": null
+                                        },
+                                        "adhocAlerts": null
+                                    },
+                                    {
+                                        "locationName": "Gatwick Airport",
+                                        "crs": "GTW",
+                                        "st": "09:09",
+                                        "et": "On time",
+                                        "at": null,
+                                        "isCancelled": null,
+                                        "length": 12,
+                                        "detachFront": null,
+                                        "formation": {
+                                            "avgLoading": 5,
+                                            "coaches": null
+                                        },
+                                        "adhocAlerts": null
+                                    }
+                                ],
+                                "serviceType": "train",
+                                "serviceChangeRequired": "false",
+                                "assocIsCancelled": "false"
+                            }
+                        ]
+                    }
+                },
+                "crs": "HOR"
+            }
+        ]
+    }
+}

@@ -12,6 +12,12 @@ EXAMPLE_RESPONSE = pkg_resources.resource_filename(
 EXAMPLE_DELAYED_RESPONSE = pkg_resources.resource_filename(
     "rail_bot.rail_api.tests", "resources/response_delayed.json"
 )
+EXAMPLE_CANCELLED_RESPONSE = pkg_resources.resource_filename(
+    "rail_bot.rail_api.tests", "resources/response_cancelled.json"
+)
+EXAMPLE_CANCELLED_RESPONSE_2 = pkg_resources.resource_filename(
+    "rail_bot.rail_api.tests", "resources/response_cancelled_2.json"
+)
 
 
 class TestTravel(unittest.TestCase):
@@ -119,6 +125,10 @@ class TestTravel(unittest.TestCase):
         self.assertFalse(travel.is_delayed)
         self.assertFalse(travel.is_cancelled)
 
+        self.assertEqual(
+            f"{travel!r}", "Train Flowery Field - Dinting\nScheduled at 19:46"
+        )
+
     def test_travel_from_response_delayed(self):
         with open(EXAMPLE_DELAYED_RESPONSE) as f:
             response = json.load(f)
@@ -135,6 +145,61 @@ class TestTravel(unittest.TestCase):
 
         self.assertTrue(travel.is_delayed)
         self.assertFalse(travel.is_cancelled)
+
+        self.assertEqual(
+            f"{travel!r}",
+            "DELAYED: This train has been delayed by train crew being delayed"
+            "\nTrain Flowery Field - Dinting"
+            "\nScheduled at 21:14 (expected 21:31)",
+        )
+
+    def test_travel_from_response_cancelled(self):
+        with open(EXAMPLE_CANCELLED_RESPONSE) as f:
+            response = json.load(f)
+
+        travel = Travel.from_response(response)
+
+        self.assertEqual(travel.origin, "London Kings Cross")
+        self.assertEqual(travel.destination, "Sunderland")
+        self.assertEqual(travel.scheduled_departure, datetime.time(8, 27))
+        self.assertEqual(travel.estimated_departure, "Cancelled")
+        self.assertEqual(travel.scheduled_arrival, datetime.time(12, 4))
+        self.assertEqual(travel.estimated_arrival, datetime.time(12, 4))
+        self.assertEqual(travel.service_type, "train")
+
+        self.assertTrue(travel.is_delayed)
+        self.assertTrue(travel.is_cancelled)
+
+        self.assertEqual(
+            f"{travel!r}",
+            "CANCELLED: This train has been cancelled because of more trains "
+            "than usual needing repairs at the same time\n"
+            "Train London Kings Cross - Sunderland",
+        )
+
+    def test_travel_from_response_cancelled_2(self):
+        with open(EXAMPLE_CANCELLED_RESPONSE_2) as f:
+            response = json.load(f)
+
+        travel = Travel.from_response(response)
+
+        self.assertEqual(travel.origin, "Earlswood (Surrey)")
+        self.assertEqual(travel.destination, "Horley")
+        self.assertEqual(travel.scheduled_departure, datetime.time(8, 57))
+        self.assertEqual(travel.estimated_departure, "Cancelled")
+        self.assertEqual(travel.scheduled_arrival, datetime.time(9, 4))
+        self.assertEqual(travel.estimated_arrival, datetime.time(9, 4))
+        self.assertEqual(travel.service_type, "train")
+
+        self.assertTrue(travel.is_delayed)
+        self.assertTrue(travel.is_cancelled)
+
+        print(f"{travel!r}")
+        self.assertEqual(
+            f"{travel!r}",
+            "CANCELLED: This train has been cancelled because of flooding\n"
+            "Train Earlswood (Surrey) - Horley",
+        )
 
 
 if __name__ == "__main__":
