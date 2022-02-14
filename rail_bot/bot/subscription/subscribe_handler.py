@@ -6,7 +6,7 @@ from telegram.ext import CallbackContext, CommandHandler
 
 from rail_bot.bot.job_manager import JobManager
 from rail_bot.bot.subscription.common import SUBSCRIBE
-from rail_bot.bot.utils import parse_time
+from rail_bot.utils import parse_time
 
 logger = logging.getLogger(__name__)
 

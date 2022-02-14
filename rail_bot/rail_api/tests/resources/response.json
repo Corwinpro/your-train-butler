@@ -1,0 +1,159 @@
+{
+    "locationName": "Flowery Field",
+    "crs": "FLF",
+    "filterLocationName": null,
+    "filtercrs": null,
+    "filterType": null,
+    "nrccMessages": null,
+    "platformAvailable": true,
+    "areServicesAvailable": null,
+    "departures": {
+        "destination": [
+            {
+                "service": {
+                    "sta": "19:46",
+                    "eta": "On time",
+                    "std": "19:46",
+                    "etd": "On time",
+                    "platform": "2",
+                    "operator": "Northern",
+                    "operatorCode": "NT",
+                    "isCircularRoute": null,
+                    "isCancelled": null,
+                    "filterLocationCancelled": null,
+                    "serviceType": "train",
+                    "length": 3,
+                    "detachFront": null,
+                    "isReverseFormation": null,
+                    "cancelReason": null,
+                    "delayReason": null,
+                    "serviceID": "WPJK/jRuPKChV7FWfDUpwA==",
+                    "adhocAlerts": null,
+                    "rsid": null,
+                    "origin": {
+                        "location": [
+                            {
+                                "locationName": "Manchester Piccadilly",
+                                "crs": "MAN",
+                                "via": null,
+                                "futureChangeTo": null,
+                                "assocIsCancelled": null
+                            }
+                        ]
+                    },
+                    "destination": {
+                        "location": [
+                            {
+                                "locationName": "Hadfield",
+                                "crs": "HDF",
+                                "via": null,
+                                "futureChangeTo": null,
+                                "assocIsCancelled": null
+                            }
+                        ]
+                    },
+                    "currentOrigins": null,
+                    "currentDestinations": null,
+                    "formation": null,
+                    "previousCallingPoints": null,
+                    "subsequentCallingPoints": {
+                        "callingPointList": [
+                            {
+                                "callingPoint": [
+                                    {
+                                        "locationName": "Newton for Hyde",
+                                        "crs": "NWN",
+                                        "st": "19:48",
+                                        "et": "On time",
+                                        "at": null,
+                                        "isCancelled": null,
+                                        "length": 3,
+                                        "detachFront": null,
+                                        "formation": null,
+                                        "adhocAlerts": null
+                                    },
+                                    {
+                                        "locationName": "Godley",
+                                        "crs": "GDL",
+                                        "st": "19:50",
+                                        "et": "On time",
+                                        "at": null,
+                                        "isCancelled": null,
+                                        "length": 3,
+                                        "detachFront": null,
+                                        "formation": null,
+                                        "adhocAlerts": null
+                                    },
+                                    {
+                                        "locationName": "Hattersley",
+                                        "crs": "HTY",
+                                        "st": "19:52",
+                                        "et": "On time",
+                                        "at": null,
+                                        "isCancelled": null,
+                                        "length": 3,
+                                        "detachFront": null,
+                                        "formation": null,
+                                        "adhocAlerts": null
+                                    },
+                                    {
+                                        "locationName": "Broadbottom",
+                                        "crs": "BDB",
+                                        "st": "19:54",
+                                        "et": "On time",
+                                        "at": null,
+                                        "isCancelled": null,
+                                        "length": 3,
+                                        "detachFront": null,
+                                        "formation": null,
+                                        "adhocAlerts": null
+                                    },
+                                    {
+                                        "locationName": "Dinting",
+                                        "crs": "DTG",
+                                        "st": "20:00",
+                                        "et": "On time",
+                                        "at": null,
+                                        "isCancelled": null,
+                                        "length": 3,
+                                        "detachFront": null,
+                                        "formation": null,
+                                        "adhocAlerts": null
+                                    },
+                                    {
+                                        "locationName": "Glossop",
+                                        "crs": "GLO",
+                                        "st": "20:03",
+                                        "et": "On time",
+                                        "at": null,
+                                        "isCancelled": null,
+                                        "length": 3,
+                                        "detachFront": null,
+                                        "formation": null,
+                                        "adhocAlerts": null
+                                    },
+                                    {
+                                        "locationName": "Hadfield",
+                                        "crs": "HDF",
+                                        "st": "20:12",
+                                        "et": "On time",
+                                        "at": null,
+                                        "isCancelled": null,
+                                        "length": 3,
+                                        "detachFront": null,
+                                        "formation": null,
+                                        "adhocAlerts": null
+                                    }
+                                ],
+                                "serviceType": "train",
+                                "serviceChangeRequired": "false",
+                                "assocIsCancelled": "false"
+                            }
+                        ]
+                    }
+                },
+                "crs": "DTG"
+            }
+        ]
+    }
+}

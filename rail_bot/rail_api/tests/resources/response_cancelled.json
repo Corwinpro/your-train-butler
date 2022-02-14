@@ -1,0 +1,163 @@
+{
+    "locationName": "London Kings Cross",
+    "crs": "KGX",
+    "filterLocationName": null,
+    "filtercrs": null,
+    "filterType": null,
+    "nrccMessages": {
+        "message": [
+            {
+                "_value_1": "\nA reduced midweek service will operate on Southern, Thameslink and Great Northern routes until further notice. More information can be found in <a href=\"http://nationalrail.co.uk/service_disruptions/287384.aspx\">Latest Travel News</a>."
+            }
+        ]
+    },
+    "platformAvailable": true,
+    "areServicesAvailable": null,
+    "departures": {
+        "destination": [
+            {
+                "service": {
+                    "sta": null,
+                    "eta": null,
+                    "std": "08:27",
+                    "etd": "Cancelled",
+                    "platform": null,
+                    "operator": "Grand Central",
+                    "operatorCode": "GC",
+                    "isCircularRoute": null,
+                    "isCancelled": true,
+                    "filterLocationCancelled": null,
+                    "serviceType": "train",
+                    "length": null,
+                    "detachFront": null,
+                    "isReverseFormation": null,
+                    "cancelReason": "This train has been cancelled because of more trains than usual needing repairs at the same time",
+                    "delayReason": "This train has been delayed by more trains than usual needing repairs at the same time",
+                    "serviceID": "aVGgE9y6WIOjMjNzjIti/Q==",
+                    "adhocAlerts": null,
+                    "rsid": null,
+                    "origin": {
+                        "location": [
+                            {
+                                "locationName": "London Kings Cross",
+                                "crs": "KGX",
+                                "via": null,
+                                "futureChangeTo": null,
+                                "assocIsCancelled": null
+                            }
+                        ]
+                    },
+                    "destination": {
+                        "location": [
+                            {
+                                "locationName": "Sunderland",
+                                "crs": "SUN",
+                                "via": null,
+                                "futureChangeTo": null,
+                                "assocIsCancelled": null
+                            }
+                        ]
+                    },
+                    "currentOrigins": {
+                        "location": [
+                            {
+                                "locationName": "York",
+                                "crs": "YRK",
+                                "via": null,
+                                "futureChangeTo": null,
+                                "assocIsCancelled": null
+                            }
+                        ]
+                    },
+                    "currentDestinations": null,
+                    "formation": null,
+                    "previousCallingPoints": null,
+                    "subsequentCallingPoints": {
+                        "callingPointList": [
+                            {
+                                "callingPoint": [
+                                    {
+                                        "locationName": "York",
+                                        "crs": "YRK",
+                                        "st": "10:25",
+                                        "et": "10:35",
+                                        "at": null,
+                                        "isCancelled": null,
+                                        "length": null,
+                                        "detachFront": null,
+                                        "formation": null,
+                                        "adhocAlerts": null
+                                    },
+                                    {
+                                        "locationName": "Thirsk",
+                                        "crs": "THI",
+                                        "st": "10:42",
+                                        "et": "10:50",
+                                        "at": null,
+                                        "isCancelled": null,
+                                        "length": null,
+                                        "detachFront": null,
+                                        "formation": null,
+                                        "adhocAlerts": null
+                                    },
+                                    {
+                                        "locationName": "Northallerton",
+                                        "crs": "NTR",
+                                        "st": "10:58",
+                                        "et": "11:01",
+                                        "at": null,
+                                        "isCancelled": null,
+                                        "length": null,
+                                        "detachFront": null,
+                                        "formation": null,
+                                        "adhocAlerts": null
+                                    },
+                                    {
+                                        "locationName": "Eaglescliffe",
+                                        "crs": "EAG",
+                                        "st": "11:16",
+                                        "et": "On time",
+                                        "at": null,
+                                        "isCancelled": null,
+                                        "length": null,
+                                        "detachFront": null,
+                                        "formation": null,
+                                        "adhocAlerts": null
+                                    },
+                                    {
+                                        "locationName": "Hartlepool",
+                                        "crs": "HPL",
+                                        "st": "11:35",
+                                        "et": "On time",
+                                        "at": null,
+                                        "isCancelled": null,
+                                        "length": null,
+                                        "detachFront": null,
+                                        "formation": null,
+                                        "adhocAlerts": null
+                                    },
+                                    {
+                                        "locationName": "Sunderland",
+                                        "crs": "SUN",
+                                        "st": "12:04",
+                                        "et": "On time",
+                                        "at": null,
+                                        "isCancelled": null,
+                                        "length": null,
+                                        "detachFront": null,
+                                        "formation": null,
+                                        "adhocAlerts": null
+                                    }
+                                ],
+                                "serviceType": "train",
+                                "serviceChangeRequired": "false",
+                                "assocIsCancelled": "false"
+                            }
+                        ]
+                    }
+                },
+                "crs": "SUN"
+            }
+        ]
+    }
+}

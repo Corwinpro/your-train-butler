@@ -1,9 +1,19 @@
+from typing import Union
 import datetime
+
+HOUR_MINUTE_FORMAT = "%H:%M"
 
 
 def parse_time(time: str) -> datetime.time:
-    date_time = datetime.datetime.strptime(time, "%H:%M")
+    date_time = datetime.datetime.strptime(time, HOUR_MINUTE_FORMAT)
     return datetime.time(hour=date_time.hour, minute=date_time.minute)
+
+
+def format_time(time: Union[datetime.time, str]) -> str:
+    if isinstance(time, str):
+        return time
+
+    return time.strftime(HOUR_MINUTE_FORMAT)
 
 
 def shift_time(
